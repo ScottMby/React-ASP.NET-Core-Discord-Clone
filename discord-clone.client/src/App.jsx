@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
+const backendUrl = "http://localhost:32773"
+
 function App() {
     const [forecasts, setForecasts] = useState();
 
@@ -40,7 +42,7 @@ function App() {
     );
     
     async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
+        const response = await fetch(backendUrl + '/weatherforecast');
         if (response.ok) {
             const data = await response.json();
             setForecasts(data);
