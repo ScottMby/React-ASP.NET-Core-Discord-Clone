@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
-const backendUrl = "http://localhost:32773"
+const backendUrl = "https://localhost:32773"
 
 function App() {
     const [forecasts, setForecasts] = useState();

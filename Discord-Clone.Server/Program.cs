@@ -13,6 +13,12 @@ namespace Discord_Clone.Server
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+
+            builder.Services.AddCors(options => options.AddPolicy("default", policy =>
+            {
+                policy.WithOrigins("https://localhost:4892");
+            }));
+
             var app = builder.Build();
 
             app.UseDefaultFiles();
@@ -28,6 +34,8 @@ namespace Discord_Clone.Server
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseCors("default");
 
 
             app.MapControllers();
