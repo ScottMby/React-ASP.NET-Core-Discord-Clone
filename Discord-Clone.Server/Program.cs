@@ -1,4 +1,7 @@
 
+using Discord_Clone.Server.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace Discord_Clone.Server
 {
     public class Program
@@ -13,6 +16,10 @@ namespace Discord_Clone.Server
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            builder.Services.AddDbContext<DiscordCloneDbContext>(options =>
+            {
+                options.UseNpgsql("Server=172.19.0.2;Port=5432;Database=DiscordCloneDb;User Id=ApplicationUser;Password=ApplicationUserAdminPassword;");
+            });
 
             builder.Services.AddCors(options => options.AddPolicy("default", policy =>
             {
