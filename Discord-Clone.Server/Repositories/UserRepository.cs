@@ -34,5 +34,20 @@ namespace Discord_Clone.Server.Repositories
                 _dbContext.SaveChanges();
             }
         }
+
+        public void EditFirstName(ClaimsPrincipal User, string FirstName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EditLastName(ClaimsPrincipal User, string LastName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EditAboutMe(ClaimsPrincipal User, string AboutMe)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
