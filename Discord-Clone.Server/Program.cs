@@ -19,12 +19,14 @@ namespace Discord_Clone.Server
 
             builder.Services.AddDbContext<DiscordCloneDbContext>(options =>
             {
-                options.UseNpgsql("Server=172.19.0.2;Port=5432;Database=DiscordCloneDb;User Id=ApplicationUser;Password=ApplicationUserAdminPassword;");
+                options.UseNpgsql("Server=host.docker.internal;Port=5432;Database=DiscordCloneDb;User Id=ApplicationUser;Password=ApplicationUserAdminPassword;");
             });
 
             builder.Services.AddCors(options => options.AddPolicy("default", policy =>
             {
-                policy.WithOrigins("https://localhost:4892");
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
             }));
 
             builder.Services.AddAuthorization();
@@ -34,7 +36,6 @@ namespace Discord_Clone.Server
 
             builder.Services.AddSwaggerGen(options =>
             {
-                options.AddServer(new Microsoft.OpenApi.Models.OpenApiServer { Url = "https://localhost:32769" });
             });
 
             var app = builder.Build();
