@@ -1,3 +1,5 @@
+using Discord_Clone.Server.Models;
+
 namespace Discord_Clone.Server
 {
     public class WeatherForecast
@@ -9,5 +11,11 @@ namespace Discord_Clone.Server
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 
         public string? Summary { get; set; }
+
+        public WeatherForecast()
+        {
+            User user = new();
+            
+        }
     }
 }
