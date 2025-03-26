@@ -1,5 +1,6 @@
 
 using Discord_Clone.Server.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Discord_Clone.Server
@@ -26,6 +27,16 @@ namespace Discord_Clone.Server
                 policy.WithOrigins("https://localhost:4892");
             }));
 
+            builder.Services.AddAuthorization();
+
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                .AddEntityFrameworkStores<DiscordCloneDbContext>();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddServer(new Microsoft.OpenApi.Models.OpenApiServer { Url = "https://localhost:32769" });
+            });
+
             var app = builder.Build();
 
             app.UseDefaultFiles();
@@ -35,7 +46,12 @@ namespace Discord_Clone.Server
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-                app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "Discord Clone API"));
+                app.UseSwagger();
+                app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    options.RoutePrefix = string.Empty;
+                });
             }
 
             app.UseHttpsRedirection();
@@ -48,6 +64,8 @@ namespace Discord_Clone.Server
             app.MapControllers();
 
             app.MapFallbackToFile("/index.html");
+
+            app.MapIdentityApi<IdentityUser>();
 
             app.Run();
         }
