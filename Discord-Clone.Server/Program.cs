@@ -1,5 +1,8 @@
 
 using Discord_Clone.Server.Data;
+using Discord_Clone.Server.Models;
+using Discord_Clone.Server.Repositories;
+using Discord_Clone.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,12 +34,14 @@ namespace Discord_Clone.Server
 
             builder.Services.AddAuthorization();
 
-            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+            builder.Services.AddIdentityApiEndpoints<User>()
                 .AddEntityFrameworkStores<DiscordCloneDbContext>();
 
             builder.Services.AddSwaggerGen(options =>
             {
             });
+
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
 
             var app = builder.Build();
 
@@ -66,7 +71,7 @@ namespace Discord_Clone.Server
 
             app.MapFallbackToFile("/index.html");
 
-            app.MapIdentityApi<IdentityUser>();
+            app.MapIdentityApi<User>();
 
             app.Run();
         }
