@@ -11,6 +11,13 @@ namespace Discord_Clone.Server.Repositories.Interfaces
         public void CheckDisplayNameValid(ClaimsPrincipal User);
 
         /// <summary>
+        /// Changes the display name of a user.
+        /// </summary>
+        /// <param name="User">The user whose display name to edit.</param>
+        /// <param name="DisplayName">The display name of the user.</param>
+        public void ChangeDisplayName(ClaimsPrincipal User, string DisplayName);
+
+        /// <summary>
         /// Adds or changes the first name of a user.
         /// </summary>
         /// <param name="User">The user whose first name to edit.</param>

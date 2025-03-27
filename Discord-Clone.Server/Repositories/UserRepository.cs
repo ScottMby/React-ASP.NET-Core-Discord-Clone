@@ -17,13 +17,10 @@ namespace Discord_Clone.Server.Repositories
             _dbContext = dbContext;
             _userManager = userManager;
         }
-        public void CheckDisplayNameValid(ClaimsPrincipal user)
+        public void CheckDisplayNameValid(ClaimsPrincipal User)
         {
-            string? userId = _userManager.GetUserId(user);
-            if (userId == null)
-                return;
+            User? userEntity = GetUser(User);
 
-            var userEntity = _dbContext.Users.Where(u => u.Id == userId).FirstOrDefault();
             if (userEntity == null)
                 return;
 
@@ -35,19 +32,61 @@ namespace Discord_Clone.Server.Repositories
             }
         }
 
+        public void ChangeDisplayName(ClaimsPrincipal User, string DisplayName)
+        {
+            User? userEntity = GetUser(User);
+
+            if (userEntity == null)
+                return;
+
+            userEntity.DisplayName = DisplayName;
+            _dbContext.SaveChanges();
+        }
+
         public void EditFirstName(ClaimsPrincipal User, string FirstName)
         {
-            throw new NotImplementedException();
+            User? userEntity = GetUser(User);
+
+            if (userEntity == null)
+                return;
+
+            userEntity.FirstName = FirstName;
+            _dbContext.SaveChanges();
         }
 
         public void EditLastName(ClaimsPrincipal User, string LastName)
         {
-            throw new NotImplementedException();
+            User? userEntity = GetUser(User);
+
+            if (userEntity == null)
+                return;
+
+            userEntity.LastName = LastName;
+            _dbContext.SaveChanges();
         }
 
         public void EditAboutMe(ClaimsPrincipal User, string AboutMe)
         {
-            throw new NotImplementedException();
+            User? userEntity = GetUser(User);
+
+            if (userEntity == null)
+                return;
+
+            userEntity.AboutMe = AboutMe;
+            _dbContext.SaveChanges();
+        }
+
+        private User GetUser(ClaimsPrincipal User)
+        {
+            string? userId = _userManager.GetUserId(User);
+            if (userId == null)
+                return null;
+
+            var userEntity = _dbContext.Users.Where(u => u.Id == userId).FirstOrDefault();
+            if (userEntity != null)
+                return userEntity;
+
+            return null;
         }
     }
 }

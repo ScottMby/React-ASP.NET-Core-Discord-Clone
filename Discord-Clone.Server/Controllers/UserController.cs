@@ -1,5 +1,6 @@
 ﻿using Discord_Clone.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,11 +39,75 @@ namespace Discord_Clone.Server.Controllers
         /// Checks that the user's display name isn't empty, if it is it generates a random one.
         /// </summary>
         /// <returns></returns>
-        [HttpPost("DisplayName")]
+        [HttpPatch("CheckDisplayName")]
         public IActionResult CheckDisplayName()
         {
-            _userRepository.CheckDisplayNameValid(this.User);
-            return Ok();
+            try
+            {
+                _userRepository.CheckDisplayNameValid(this.User);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+            
+        }
+
+        [HttpPatch("EditDisplayName")]
+        public IActionResult ChangeDisplayName(string DisplayName)
+        {
+            try
+            {
+                _userRepository.ChangeDisplayName(this.User, DisplayName);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPatch("EditFirstName")]
+        public IActionResult ChangeFirstName(string FirstName)
+        {
+            try
+            {
+                _userRepository.EditFirstName(this.User, FirstName);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPatch("EditLastName")]
+        public IActionResult ChangeLastName(string LastName)
+        {
+            try
+            {
+                _userRepository.EditLastName(this.User, LastName);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPatch("EditAboutMe")]
+        public IActionResult ChangeAboutMe(string AboutMe)
+        {
+            try
+            {
+                _userRepository.EditAboutMe(this.User, AboutMe);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }
