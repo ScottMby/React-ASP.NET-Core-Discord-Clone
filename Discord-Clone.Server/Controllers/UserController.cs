@@ -17,6 +17,7 @@ namespace Discord_Clone.Server.Controllers
         public UserController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
+
         }
 
         /// <summary>

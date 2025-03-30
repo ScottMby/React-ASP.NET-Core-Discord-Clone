@@ -14,10 +14,13 @@ namespace Discord_Clone.Server.Repositories
         private DiscordCloneDbContext _dbContext {get; set;}
         private UserManager<User> _userManager { get; set; }
 
-        public UserRepository(DiscordCloneDbContext dbContext, UserManager<User> userManager)
+        private ILogger<Program> _logger { get; set; }
+
+        public UserRepository(DiscordCloneDbContext dbContext, UserManager<User> userManager, ILogger<Program> logger)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _logger = logger;
         }
         /// <summary>
         /// Checks that the display name of a user has been set. If not, sets the display name as a random name.
@@ -140,6 +143,7 @@ namespace Discord_Clone.Server.Repositories
             if (userEntity != null)
                 return userEntity;
 
+            _logger.LogWarning("Found user ID {userId} but could not find user.", userId);
             throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
 

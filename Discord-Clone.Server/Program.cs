@@ -3,10 +3,12 @@ using Discord_Clone.Server.Data;
 using Discord_Clone.Server.Models;
 using Discord_Clone.Server.Repositories;
 using Discord_Clone.Server.Repositories.Interfaces;
-using Discord_Clone.Server.Utilities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
 
 namespace Discord_Clone.Server
 {
@@ -14,10 +16,56 @@ namespace Discord_Clone.Server
     {
         public static void Main(string[] args)
         {
+            /*x.AddOtlpExporter(a =>
+                    {
+                        a.Endpoint = new Uri("http://host.docker.internal:5341/ingest/otlp/v1/logs");
+                        a.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        a.Headers = "X-Seq-ApiKey=AmodI5OpiGtkUTTgR5kG";
+                    });
+            */
+
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Logging.ClearProviders();
+            builder.Services.AddOpenTelemetry()
+                .ConfigureResource(resource => resource.AddService("DiscordClone"))
+                .WithMetrics(metrics =>
+                {
+                    metrics.AddAspNetCoreInstrumentation();
+                    metrics.AddHttpClientInstrumentation();
+                    metrics.AddOtlpExporter(a =>
+                    {
+                        a.Endpoint = new Uri("http://host.docker.internal:5341/ingest/otlp/v1/metrics");
+                        a.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        a.Headers = "X-Seq-ApiKey=AmodI5OpiGtkUTTgR5kG";
+                    });
+                })
+                .WithTracing(tracing =>
+                {
+                    tracing.AddAspNetCoreInstrumentation();
+                    tracing.AddHttpClientInstrumentation();
+                    tracing.AddEntityFrameworkCoreInstrumentation();
 
+                    tracing.AddOtlpExporter(a =>
+                    {
+                        a.Endpoint = new Uri("http://host.docker.internal:5341/ingest/otlp/v1/traces");
+                        a.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        a.Headers = "X-Seq-ApiKey=AmodI5OpiGtkUTTgR5kG";
+                    });
+                });
+
+            builder.Logging.AddOpenTelemetry(logging =>
+            {
+
+                logging.AddOtlpExporter(a =>
+                {
+                    a.Endpoint = new Uri("http://host.docker.internal:5341/ingest/otlp/v1/logs");
+                    a.Protocol = OtlpExportProtocol.HttpProtobuf;
+                    a.Headers = "X-Seq-ApiKey=AmodI5OpiGtkUTTgR5kG";
+                });
+            });
+
+            // Add services to the container.
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
@@ -41,7 +89,7 @@ namespace Discord_Clone.Server
 
             builder.Services.AddSwaggerGen(options =>
             {
-                
+
             });
 
             builder.Services.AddTransient<IUserRepository, UserRepository>();
