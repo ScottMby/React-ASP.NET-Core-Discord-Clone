@@ -42,7 +42,7 @@ namespace Discord_Clone.Server.Utilities
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

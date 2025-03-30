@@ -108,7 +108,15 @@ namespace Discord_Clone.Server.Repositories
                 {
                     File.CopyTo(stream);
                 }
+
+                string? oldURL = _dbContext.Users.Where(i => i.Id == userEntity.Id).First().PhotoURL;
+
                 _dbContext.Users.Where(i => i.Id == userEntity.Id).First().PhotoURL = filePath;
+
+                if(!string.IsNullOrEmpty(oldURL))
+                {
+                    System.IO.File.Delete(oldURL);
+                }
             }
             else
             {
