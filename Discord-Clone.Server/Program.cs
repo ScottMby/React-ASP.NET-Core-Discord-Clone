@@ -5,6 +5,7 @@ using Discord_Clone.Server.Repositories;
 using Discord_Clone.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace Discord_Clone.Server
 {
@@ -39,6 +40,7 @@ namespace Discord_Clone.Server
 
             builder.Services.AddSwaggerGen(options =>
             {
+                
             });
 
             builder.Services.AddTransient<IUserRepository, UserRepository>();

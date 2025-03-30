@@ -109,5 +109,12 @@ namespace Discord_Clone.Server.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpPost("ChangePhoto")]
+        public IActionResult ChangePhoto(IFormFile File)
+        {
+            _userRepository.StoreUserImage(this.User, File);
+            return Ok();
+        }
     }
 }

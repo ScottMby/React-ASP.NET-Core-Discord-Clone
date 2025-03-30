@@ -37,5 +37,11 @@ namespace Discord_Clone.Server.Repositories.Interfaces
         /// <param name="User">The user whose about me section to edit.</param>
         /// <param name="AboutMe">The about me section text of a user.</param>
         public void EditAboutMe(ClaimsPrincipal User, string AboutMe);
+
+        /// <summary>
+        /// Stores uploaded user images.
+        /// </summary>
+        /// <param name="File">The file to store.</param>
+        public void StoreUserImage(ClaimsPrincipal User, IFormFile File);
     }
 }

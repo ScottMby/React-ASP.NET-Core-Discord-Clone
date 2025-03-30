@@ -88,5 +88,26 @@ namespace Discord_Clone.Server.Repositories
 
             return null;
         }
+
+        public void StoreUserImage(ClaimsPrincipal User, IFormFile File)
+        {
+            string? userId = _userManager.GetUserId(User);
+            string filePath = "";
+
+
+            ///!!!Important: Do not use original file name without validation & sanitization... this could lead to security issues.
+            if (File.Length > 0)
+            {
+                //In temporary folder. For production builds use blob storage.
+                filePath = Path.Combine("/userImages", Path.GetTempFileName());
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    File.CopyTo(stream);
+                }
+                _dbContext.Users.Where(i => i.Id == userId).First().PhotoURL = filePath;
+            }
+            _dbContext.SaveChanges();
+        }
     }
 }
