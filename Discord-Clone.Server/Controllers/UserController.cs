@@ -1,5 +1,6 @@
 ﻿using Discord_Clone.Server.Models;
 using Discord_Clone.Server.Repositories.Interfaces;
+using Discord_Clone.Server.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -132,6 +133,7 @@ namespace Discord_Clone.Server.Controllers
         /// <param name="File">A file the user has uploaded to change to their new profile photo.</param>
         /// <returns>HTTP Status Code</returns>
         [HttpPost("ChangePhoto")]
+        [ImageValidationFilter(5242880)]
         public IActionResult ChangePhoto(IFormFile File)
         {
             _userRepository.StoreUserImage(this.User, File);
