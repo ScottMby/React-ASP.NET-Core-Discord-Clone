@@ -1,4 +1,5 @@
-﻿using Discord_Clone.Server.Repositories.Interfaces;
+﻿using Discord_Clone.Server.Models;
+using Discord_Clone.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -22,23 +23,18 @@ namespace Discord_Clone.Server.Controllers
         /// </summary>
         /// <param name="signInManager">The user sign in API</param>
         /// <param name="empty">The body of the request</param>
-        /// <returns>200 - Ok if signed out, 401 - if not</returns>
+        /// <returns>HTTP Status Code</returns>
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout([FromServices] SignInManager<IdentityUser> signInManager, [FromBody] object empty)
+        public async Task<IActionResult> Logout([FromServices] SignInManager<User> signInManager)
         {
-            if(empty == null)
-            {
                 await signInManager.SignOutAsync();
                 return Ok();
-            }
-            return Unauthorized();
-
         }
 
         /// <summary>
         /// Checks that the user's display name isn't empty, if it is it generates a random one.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>HTTP Status Code</returns>
         [HttpPatch("CheckDisplayName")]
         public IActionResult CheckDisplayName()
         {
@@ -54,6 +50,11 @@ namespace Discord_Clone.Server.Controllers
             
         }
 
+        /// <summary>
+        /// Edits a users display name.
+        /// </summary>
+        /// <param name="DisplayName">New display name of the user.</param>
+        /// <returns>HTTP Status Code</returns>
         [HttpPatch("EditDisplayName")]
         public IActionResult ChangeDisplayName(string DisplayName)
         {
@@ -68,6 +69,11 @@ namespace Discord_Clone.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Edits a user's first name.
+        /// </summary>
+        /// <param name="FirstName">New first name of the user.</param>
+        /// <returns>HTTP Status Code</returns>
         [HttpPatch("EditFirstName")]
         public IActionResult ChangeFirstName(string FirstName)
         {
@@ -82,6 +88,11 @@ namespace Discord_Clone.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Edits a user's last name.
+        /// </summary>
+        /// <param name="LastName">New last name of the user.</param>
+        /// <returns>HTTP Status Code</returns>
         [HttpPatch("EditLastName")]
         public IActionResult ChangeLastName(string LastName)
         {
@@ -96,6 +107,11 @@ namespace Discord_Clone.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Edits a user's about me section.
+        /// </summary>
+        /// <param name="AboutMe">New content of user's about me section.</param>
+        /// <returns>HTTP Status Code</returns>
         [HttpPatch("EditAboutMe")]
         public IActionResult ChangeAboutMe(string AboutMe)
         {
@@ -110,6 +126,11 @@ namespace Discord_Clone.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Changes user's profile photo.
+        /// </summary>
+        /// <param name="File">A file the user has uploaded to change to their new profile photo.</param>
+        /// <returns>HTTP Status Code</returns>
         [HttpPost("ChangePhoto")]
         public IActionResult ChangePhoto(IFormFile File)
         {
