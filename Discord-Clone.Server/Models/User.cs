@@ -7,7 +7,7 @@ namespace Discord_Clone.Server.Models
         public string? DisplayName { get; set; }
 
         [PersonalData]
-        public string? FirstName { get; set;}
+        public string? FirstName { get; set; }
 
         [PersonalData]
         public string? LastName { get; set; }
@@ -16,5 +16,8 @@ namespace Discord_Clone.Server.Models
         public string? PhotoURL { get; set; }
 
         public string? AboutMe { get; set; }
+
+        public List<UserFreinds> UserFreinds = new();
+
     }
 }
