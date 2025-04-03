@@ -11,6 +11,10 @@ namespace Discord_Clone.Server.Utilities
     {
         private readonly long _maxSize;
 
+        /// <summary>
+        /// Verifies that a IFormFile passed as a parameter is an image and within a maximum size.
+        /// </summary>
+        /// <param name="maxSize">Max file size in bytes.</param>
         public ImageValidationFilter(long maxSize)
         {
             _maxSize = maxSize;
