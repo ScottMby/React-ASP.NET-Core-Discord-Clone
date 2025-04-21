@@ -1,6 +1,6 @@
 ﻿namespace Discord_Clone.Server.Models
 {
-    public class UserFreinds
+    public class UserFriends
     {
         /// <summary>
         /// Id of the record of which users are friends.
@@ -13,7 +13,7 @@
         public string SenderId { get; set; }
 
         /// <summary>
-        /// The id of user who originally recieved and accepted the friend request.
+        /// The id of user who originally received and accepted the friend request.
         /// </summary>
         public string ReceiverId { get; set; }
 

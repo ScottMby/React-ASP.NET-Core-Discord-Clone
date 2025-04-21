@@ -6,8 +6,8 @@ namespace Discord_Clone.Server.Data
 {
     public class DiscordCloneDbContext : IdentityDbContext<User>
     {
-        DbSet<UserFreinds> UserFreinds { get; set; }
-        DbSet<UserFreindRequests> UserFreindRequests { get; set; }
+        DbSet<UserFriends> UserFriends { get; set; }
+        DbSet<UserFriendRequests> UserFriendRequests { get; set; }
         DbSet<Chat> Chats { get; set; }
         DbSet<Message> Messages { get; set; }
 
@@ -35,37 +35,37 @@ namespace Discord_Clone.Server.Data
                 c.HasKey(c => c.ChatId);
             });
 
-            builder.Entity<UserFreinds>(uf =>
+            builder.Entity<UserFriends>(uf =>
             {
                 uf.HasKey(uf => uf.UserFriendsId);
 
                 uf.HasOne(uf => uf.Sender)
-                    .WithMany(u => u.UserFreinds)
+                    .WithMany(u => u.UserFriends)
                     .HasForeignKey(uf => uf.SenderId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 uf.HasOne(uf => uf.Receiver)
-                    .WithMany(u => u.UserFreinds)
+                    .WithMany(u => u.UserFriends)
                     .HasForeignKey(uf => uf.ReceiverId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 uf.HasOne(uf => uf.Chat)
-                    .WithOne(c => c.UserFreinds)
-                    .HasForeignKey<UserFreinds>(uf => uf.ChatID)
+                    .WithOne(c => c.UserFriends)
+                    .HasForeignKey<UserFriends>(uf => uf.ChatID)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            builder.Entity<UserFreindRequests>(ufr =>
+            builder.Entity<UserFriendRequests>(ufr =>
             {
                 ufr.HasKey(ufr => ufr.FriendRequestId);
 
                 ufr.HasOne(ufr => ufr.Sender)
-                    .WithMany(u => u.UserFreindRequests)
+                    .WithMany(u => u.UserFriendRequests)
                     .HasForeignKey(ufr => ufr.SenderId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 ufr.HasOne(ufr => ufr.Reciever)
-                    .WithMany(u => u.UserFreindRequests)
+                    .WithMany(u => u.UserFriendRequests)
                     .HasForeignKey(ufr => ufr.SenderId)
                     .OnDelete(DeleteBehavior.Restrict);
             });

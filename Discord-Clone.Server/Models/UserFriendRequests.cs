@@ -3,7 +3,7 @@
     /// <summary>
     /// A record of an outstanding friend request. This should be deleted when the request is accepted or rejected.
     /// </summary>
-    public class UserFreindRequests
+    public class UserFriendRequests
     {
         /// <summary>
         /// The id of the friend request.
@@ -16,7 +16,7 @@
         public string SenderId { get; set; }
 
         /// <summary>
-        /// The id of the recieving user.
+        /// The id of the receiving user.
         /// </summary>
         public string RecieverId { get; set; }
 
@@ -31,7 +31,7 @@
         public User Sender { get; set; }
 
         /// <summary>
-        /// The user who recieved the friend request.
+        /// The user who received the friend request.
         /// </summary>
         public User Reciever { get; set; }
     }

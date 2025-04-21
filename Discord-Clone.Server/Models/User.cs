@@ -34,12 +34,12 @@ namespace Discord_Clone.Server.Models
         /// <summary>
         /// A list of the friends the user has.
         /// </summary>
-        public List<UserFreinds> UserFreinds = new();
+        public List<UserFriends> UserFriends = new();
 
         /// <summary>
         /// A list of the friend requests a user has.
         /// </summary>
-        public List<UserFreindRequests> UserFreindRequests = new();
+        public List<UserFriendRequests> UserFriendRequests = new();
 
     }
 }

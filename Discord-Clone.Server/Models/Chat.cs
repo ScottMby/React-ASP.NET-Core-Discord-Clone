@@ -10,7 +10,7 @@
         /// <summary>
         /// The record of friendship between the chatting users.
         /// </summary>
-        public UserFreinds UserFreinds { get; set; }
+        public UserFriends UserFriends { get; set; }
 
         /// <summary>
         /// List of messages within the chat.
