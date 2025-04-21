@@ -20,6 +20,16 @@ namespace Discord_Clone.Server.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<User>(u =>
+            {
+                u.HasGeneratedTsVectorColumn(
+                    u => u.UserSearchVector,
+                    "english",
+                    u => new { u.UserName, u.DisplayName })
+                    .HasIndex(u => u.UserSearchVector)
+                    .HasMethod("GIN");
+            });
+
             builder.Entity<Message>(m =>
             {
                 m.HasKey(m => m.MessageId);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using NpgsqlTypes;
 
 namespace Discord_Clone.Server.Models
 {
@@ -50,6 +51,11 @@ namespace Discord_Clone.Server.Models
         /// A list of the friend requests a user has received.
         /// </summary>
         public List<UserFriendRequests> ReceivedUserFriendRequests = new();
+
+        /// <summary>
+        /// A TsVector used to search for Users.
+        /// </summary>
+        public NpgsqlTsVector UserSearchVector { get; set; }
 
     }
 }
