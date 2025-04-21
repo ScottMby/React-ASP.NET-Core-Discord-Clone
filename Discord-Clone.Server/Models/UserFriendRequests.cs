@@ -33,6 +33,6 @@
         /// <summary>
         /// The user who received the friend request.
         /// </summary>
-        public User Reciever { get; set; }
+        public User Receiver { get; set; }
     }
 }

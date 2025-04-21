@@ -32,14 +32,24 @@ namespace Discord_Clone.Server.Models
         public string? AboutMe { get; set; }
 
         /// <summary>
-        /// A list of the friends the user has.
+        /// A list of the friends the user has (where the user was the sender of the friend request).
         /// </summary>
-        public List<UserFriends> UserFriends = new();
+        public List<UserFriends> SentUserFriends = new();
 
         /// <summary>
-        /// A list of the friend requests a user has.
+        /// A list of the friends the user has (where the user was the receiver of the friend request).
         /// </summary>
-        public List<UserFriendRequests> UserFriendRequests = new();
+        public List<UserFriends> ReceivedUserFriends = new();
+
+        /// <summary>
+        /// A list of the friend requests a user has sent.
+        /// </summary>
+        public List<UserFriendRequests> SentUserFriendRequests = new();
+
+        /// <summary>
+        /// A list of the friend requests a user has received.
+        /// </summary>
+        public List<UserFriendRequests> ReceivedUserFriendRequests = new();
 
     }
 }

@@ -40,12 +40,12 @@ namespace Discord_Clone.Server.Data
                 uf.HasKey(uf => uf.UserFriendsId);
 
                 uf.HasOne(uf => uf.Sender)
-                    .WithMany(u => u.UserFriends)
+                    .WithMany(u => u.SentUserFriends)
                     .HasForeignKey(uf => uf.SenderId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 uf.HasOne(uf => uf.Receiver)
-                    .WithMany(u => u.UserFriends)
+                    .WithMany(u => u.ReceivedUserFriends)
                     .HasForeignKey(uf => uf.ReceiverId)
                     .OnDelete(DeleteBehavior.Restrict);
 
@@ -60,12 +60,12 @@ namespace Discord_Clone.Server.Data
                 ufr.HasKey(ufr => ufr.FriendRequestId);
 
                 ufr.HasOne(ufr => ufr.Sender)
-                    .WithMany(u => u.UserFriendRequests)
+                    .WithMany(u => u.SentUserFriendRequests)
                     .HasForeignKey(ufr => ufr.SenderId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                ufr.HasOne(ufr => ufr.Reciever)
-                    .WithMany(u => u.UserFriendRequests)
+                ufr.HasOne(ufr => ufr.Receiver)
+                    .WithMany(u => u.ReceivedUserFriendRequests)
                     .HasForeignKey(ufr => ufr.SenderId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
