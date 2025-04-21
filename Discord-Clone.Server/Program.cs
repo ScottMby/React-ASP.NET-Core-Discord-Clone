@@ -16,13 +16,6 @@ namespace Discord_Clone.Server
     {
         public static void Main(string[] args)
         {
-            /*x.AddOtlpExporter(a =>
-                    {
-                        a.Endpoint = new Uri("http://host.docker.internal:5341/ingest/otlp/v1/logs");
-                        a.Protocol = OtlpExportProtocol.HttpProtobuf;
-                        a.Headers = "X-Seq-ApiKey=AmodI5OpiGtkUTTgR5kG";
-                    });
-            */
 
             var builder = WebApplication.CreateBuilder(args);
 
