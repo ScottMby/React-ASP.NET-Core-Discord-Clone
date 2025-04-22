@@ -20,7 +20,7 @@ namespace Discord_Clone.Server.Data
                 u.HasGeneratedTsVectorColumn(
                     u => u.UserSearchVector,
                     "english",
-                    u => new { u.UserName, u.DisplayName })
+                    u => new { u.DisplayName })
                     .HasIndex(u => u.UserSearchVector)
                     .HasMethod("GIN");
             });

@@ -6,9 +6,9 @@
 
         public required string DisplayName { get; set; }
 
-        public required string UserName { get; set; }
-
         public required string PhotoURL { get; set; }
+
+        public required float Rank { get; set; }
 
     }
 }

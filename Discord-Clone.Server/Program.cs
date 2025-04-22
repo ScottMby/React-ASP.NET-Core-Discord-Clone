@@ -87,6 +87,7 @@ namespace Discord_Clone.Server
             });
 
             builder.Services.AddTransient<IUserRepository, UserRepository>();
+            builder.Services.AddTransient<IUserFriendsRepository, UserFriendsRepository>();
 
             var app = builder.Build();
 
