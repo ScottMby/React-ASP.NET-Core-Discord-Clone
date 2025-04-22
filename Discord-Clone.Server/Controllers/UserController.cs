@@ -11,14 +11,9 @@ namespace Discord_Clone.Server.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class UserController : ControllerBase
+    public class UserController(IUserRepository userRepository) : ControllerBase
     {
-        private IUserRepository _userRepository { get; set; }
-        public UserController(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-
-        }
+        private IUserRepository UserRepository { get; set; } = userRepository;
 
         /// <summary>
         /// Signs Out User.
@@ -42,7 +37,7 @@ namespace Discord_Clone.Server.Controllers
         {
             try
             {
-                _userRepository.CheckDisplayNameValid(this.User);
+                UserRepository.CheckDisplayNameValid(this.User);
                 return Ok();
             }
             catch
@@ -62,7 +57,7 @@ namespace Discord_Clone.Server.Controllers
         {
             try
             {
-                _userRepository.ChangeDisplayName(this.User, DisplayName);
+                UserRepository.ChangeDisplayName(this.User, DisplayName);
                 return Ok();
             }
             catch
@@ -81,7 +76,7 @@ namespace Discord_Clone.Server.Controllers
         {
             try
             {
-                _userRepository.EditFirstName(this.User, FirstName);
+                UserRepository.EditFirstName(this.User, FirstName);
                 return Ok();
             }
             catch
@@ -100,7 +95,7 @@ namespace Discord_Clone.Server.Controllers
         {
             try
             {
-                _userRepository.EditLastName(this.User, LastName);
+                UserRepository.EditLastName(this.User, LastName);
                 return Ok();
             }
             catch
@@ -119,7 +114,7 @@ namespace Discord_Clone.Server.Controllers
         {
             try
             {
-                _userRepository.EditAboutMe(this.User, AboutMe);
+                UserRepository.EditAboutMe(this.User, AboutMe);
                 return Ok();
             }
             catch
@@ -137,7 +132,7 @@ namespace Discord_Clone.Server.Controllers
         [ImageValidationFilter(5242880)]
         public IActionResult ChangePhoto(IFormFile File)
         {
-            _userRepository.StoreUserImage(this.User, File);
+            UserRepository.StoreUserImage(this.User, File);
             return Ok();
         }
     }

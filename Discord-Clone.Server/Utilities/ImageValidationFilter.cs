@@ -1,24 +1,19 @@
-﻿using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Net;
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Discord_Clone.Server.Utilities
 {
-    public class ImageValidationFilter: Attribute, IActionFilter
+    /// <summary>
+    /// Verifies that a IFormFile passed as a parameter is an image and within a maximum size.
+    /// </summary>
+    /// <param name="maxSize">Max file size in bytes.</param>
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ImageValidationFilter(long maxSize) : Attribute, IActionFilter
     {
-        private readonly long _maxSize;
+        private readonly long _maxSize = maxSize;
 
-        /// <summary>
-        /// Verifies that a IFormFile passed as a parameter is an image and within a maximum size.
-        /// </summary>
-        /// <param name="maxSize">Max file size in bytes.</param>
-        public ImageValidationFilter(long maxSize)
-        {
-            _maxSize = maxSize;
-        }
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var param = context.ActionArguments.SingleOrDefault(p => p.Value is IFormFile);

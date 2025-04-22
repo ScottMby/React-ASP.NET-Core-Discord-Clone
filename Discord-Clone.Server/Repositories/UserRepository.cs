@@ -4,24 +4,17 @@ using Discord_Clone.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using RandomFriendlyNameGenerator;
 using System.Security.Claims;
-using System.Web.Http;
 using System.Net;
 
 namespace Discord_Clone.Server.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(DiscordCloneDbContext dbContext, UserManager<User> userManager, ILogger<Program> logger) : IUserRepository
     {
-        private DiscordCloneDbContext _dbContext {get; set;}
-        private UserManager<User> _userManager { get; set; }
+        private DiscordCloneDbContext DbContext { get; set; } = dbContext;
+        private UserManager<User> UserManager { get; set; } = userManager;
 
-        private ILogger<Program> _logger { get; set; }
+        private ILogger<Program> Logger { get; set; } = logger;
 
-        public UserRepository(DiscordCloneDbContext dbContext, UserManager<User> userManager, ILogger<Program> logger)
-        {
-            _dbContext = dbContext;
-            _userManager = userManager;
-            _logger = logger;
-        }
         /// <summary>
         /// Checks that the display name of a user has been set. If not, sets the display name as a random name.
         /// </summary>
@@ -34,7 +27,7 @@ namespace Discord_Clone.Server.Repositories
             {
                 // Generate Random Display Name
                 userEntity.DisplayName = NameGenerator.Identifiers.Get(IdentifierTemplate.SilentBob, NameOrderingStyle.SilentBobStyle);
-                _dbContext.SaveChanges();
+                DbContext.SaveChanges();
             }
         }
 
@@ -48,7 +41,7 @@ namespace Discord_Clone.Server.Repositories
             User? userEntity = GetUser(User);
 
             userEntity.DisplayName = DisplayName;
-            _dbContext.SaveChanges();
+            DbContext.SaveChanges();
         }
 
         /// <summary>
@@ -61,7 +54,7 @@ namespace Discord_Clone.Server.Repositories
             User? userEntity = GetUser(User);
 
             userEntity.FirstName = FirstName;
-            _dbContext.SaveChanges();
+            DbContext.SaveChanges();
         }
 
         /// <summary>
@@ -74,7 +67,7 @@ namespace Discord_Clone.Server.Repositories
             User? userEntity = GetUser(User);
 
             userEntity.LastName = LastName;
-            _dbContext.SaveChanges();
+            DbContext.SaveChanges();
         }
 
         /// <summary>
@@ -87,7 +80,7 @@ namespace Discord_Clone.Server.Repositories
             User? userEntity = GetUser(User);
 
             userEntity.AboutMe = AboutMe;
-            _dbContext.SaveChanges();
+            DbContext.SaveChanges();
         }
 
         /// <summary>
@@ -112,9 +105,9 @@ namespace Discord_Clone.Server.Repositories
                     File.CopyTo(stream);
                 }
 
-                string? oldURL = _dbContext.Users.Where(i => i.Id == userEntity.Id).First().PhotoURL;
+                string? oldURL = DbContext.Users.Where(i => i.Id == userEntity.Id).First().PhotoURL;
 
-                _dbContext.Users.Where(i => i.Id == userEntity.Id).First().PhotoURL = filePath;
+                DbContext.Users.Where(i => i.Id == userEntity.Id).First().PhotoURL = filePath;
 
                 if(!string.IsNullOrEmpty(oldURL))
                 {
@@ -123,9 +116,9 @@ namespace Discord_Clone.Server.Repositories
             }
             else
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                throw new Exception("File length is smaller than a byte.");
             }
-            _dbContext.SaveChanges();
+            DbContext.SaveChanges();
         }
 
         /// <summary>
@@ -135,16 +128,12 @@ namespace Discord_Clone.Server.Repositories
         /// <returns>The user.</returns>
         private User GetUser(ClaimsPrincipal User)
         {
-            string? userId = _userManager.GetUserId(User);
-            if (userId == null)
-                throw new HttpResponseException(HttpStatusCode.Unauthorized);
-
-            var userEntity = _dbContext.Users.Where(u => u.Id == userId).FirstOrDefault();
+            string? userId = UserManager.GetUserId(User) ?? throw new Exception("User's id could not be found. User: " + User);
+            var userEntity = DbContext.Users.Where(u => u.Id == userId).FirstOrDefault();
             if (userEntity != null)
                 return userEntity;
 
-            _logger.LogWarning("Found user ID {userId} but could not find user.", userId);
-            throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            throw new Exception("Found user ID {userId} but could not find user." + userId);
         }
 
 

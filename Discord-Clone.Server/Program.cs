@@ -9,6 +9,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
+using Discord_Clone.Server.Middleware;
 
 namespace Discord_Clone.Server
 {
@@ -105,6 +106,8 @@ namespace Discord_Clone.Server
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<HttpExceptionHandlingMiddleware>();
 
             app.UseAuthorization();
 

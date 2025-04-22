@@ -5,16 +5,16 @@
         /// <summary>
         /// Id of the chat.
         /// </summary>
-        public string ChatId { get; set; }
+        public required string ChatId { get; set; }
 
         /// <summary>
         /// The record of friendship between the chatting users.
         /// </summary>
-        public UserFriends UserFriends { get; set; }
+        public required UserFriends UserFriends { get; set; }
 
         /// <summary>
         /// List of messages within the chat.
         /// </summary>
-        public List<Message> Messages = new();
+        public List<Message> Messages = [];
     }
 }

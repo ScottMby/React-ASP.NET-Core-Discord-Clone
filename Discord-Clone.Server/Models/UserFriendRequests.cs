@@ -8,17 +8,17 @@
         /// <summary>
         /// The id of the friend request.
         /// </summary>
-        public string FriendRequestId { get; set; }
+        public required string FriendRequestId { get; set; }
 
         /// <summary>
         /// The id of the sending user.
         /// </summary>
-        public string SenderId { get; set; }
+        public required string SenderId { get; set; }
 
         /// <summary>
         /// The id of the receiving user.
         /// </summary>
-        public string RecieverId { get; set; }
+        public required string ReceiverId { get; set; }
 
         /// <summary>
         /// The timestamp of when the request was sent.
@@ -28,11 +28,11 @@
         /// <summary>
         /// The user who sent the friend request.
         /// </summary>
-        public User Sender { get; set; }
+        public required User Sender { get; set; }
 
         /// <summary>
         /// The user who received the friend request.
         /// </summary>
-        public User Receiver { get; set; }
+        public required User Receiver { get; set; }
     }
 }

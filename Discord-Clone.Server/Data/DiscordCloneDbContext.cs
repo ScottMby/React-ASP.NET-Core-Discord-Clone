@@ -4,17 +4,12 @@ using Discord_Clone.Server.Models;
 
 namespace Discord_Clone.Server.Data
 {
-    public class DiscordCloneDbContext : IdentityDbContext<User>
+    public class DiscordCloneDbContext(DbContextOptions<DiscordCloneDbContext> options) : IdentityDbContext<User>(options)
     {
         DbSet<UserFriends> UserFriends { get; set; }
         DbSet<UserFriendRequests> UserFriendRequests { get; set; }
         DbSet<Chat> Chats { get; set; }
         DbSet<Message> Messages { get; set; }
-
-        public DiscordCloneDbContext(DbContextOptions<DiscordCloneDbContext> options) : base(options)
-        {
-
-        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

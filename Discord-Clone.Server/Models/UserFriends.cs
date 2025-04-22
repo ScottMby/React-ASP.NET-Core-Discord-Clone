@@ -5,17 +5,17 @@
         /// <summary>
         /// Id of the record of which users are friends.
         /// </summary>
-        public string UserFriendsId { get; set; }
+        public required string UserFriendsId { get; set; }
 
         /// <summary>
         /// The if of the user who originally sent the friend request.
         /// </summary>
-        public string SenderId { get; set; }
+        public required string SenderId { get; set; }
 
         /// <summary>
         /// The id of user who originally received and accepted the friend request.
         /// </summary>
-        public string ReceiverId { get; set; }
+        public required string ReceiverId { get; set; }
 
         /// <summary>
         /// The timestamp of when the friend request was accepted.
@@ -30,16 +30,16 @@
         /// <summary>
         /// The chat object between each friend.
         /// </summary>
-        public Chat Chat { get; set; }
+        public required Chat Chat { get; set; }
 
         /// <summary>
         /// The user who originally sent the friend request.
         /// </summary>
-        public User Sender { get; set; }
+        public required User Sender { get; set; }
 
         /// <summary>
         /// The user who originally received and accepted the friend request.
         /// </summary>
-        public User Receiver { get; set; }
+        public required User Receiver { get; set; }
     }
 }

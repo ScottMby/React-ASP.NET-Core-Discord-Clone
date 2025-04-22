@@ -35,27 +35,27 @@ namespace Discord_Clone.Server.Models
         /// <summary>
         /// A list of the friends the user has (where the user was the sender of the friend request).
         /// </summary>
-        public List<UserFriends> SentUserFriends = new();
+        public List<UserFriends> SentUserFriends = [];
 
         /// <summary>
         /// A list of the friends the user has (where the user was the receiver of the friend request).
         /// </summary>
-        public List<UserFriends> ReceivedUserFriends = new();
+        public List<UserFriends> ReceivedUserFriends = [];
 
         /// <summary>
         /// A list of the friend requests a user has sent.
         /// </summary>
-        public List<UserFriendRequests> SentUserFriendRequests = new();
+        public List<UserFriendRequests> SentUserFriendRequests = [];
 
         /// <summary>
         /// A list of the friend requests a user has received.
         /// </summary>
-        public List<UserFriendRequests> ReceivedUserFriendRequests = new();
+        public List<UserFriendRequests> ReceivedUserFriendRequests = [];
 
         /// <summary>
         /// A TsVector used to search for Users.
         /// </summary>
-        public NpgsqlTsVector UserSearchVector { get; set; }
+        public NpgsqlTsVector? UserSearchVector { get; set; }
 
     }
 }
