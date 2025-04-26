@@ -19,7 +19,7 @@ namespace Discord_Clone.Server.Repositories
         /// Checks that the display name of a user has been set. If not, sets the display name as a random name.
         /// </summary>
         /// <param name="User">The user whose display name you want to check.</param>
-        public void CheckDisplayNameValid(ClaimsPrincipal User)
+        public async Task CheckDisplayNameValid(ClaimsPrincipal User)
         {
             User? userEntity = GetUser(User);
 
@@ -27,7 +27,7 @@ namespace Discord_Clone.Server.Repositories
             {
                 // Generate Random Display Name
                 userEntity.DisplayName = NameGenerator.Identifiers.Get(IdentifierTemplate.SilentBob, NameOrderingStyle.SilentBobStyle);
-                DbContext.SaveChanges();
+                await DbContext.SaveChangesAsync();
             }
         }
 
@@ -36,12 +36,12 @@ namespace Discord_Clone.Server.Repositories
         /// </summary>
         /// <param name="User">The user whose display name to edit.</param>
         /// <param name="DisplayName">The display name of the user.</param>
-        public void ChangeDisplayName(ClaimsPrincipal User, string DisplayName)
+        public async Task ChangeDisplayName(ClaimsPrincipal User, string DisplayName)
         {
             User? userEntity = GetUser(User);
 
             userEntity.DisplayName = DisplayName;
-            DbContext.SaveChanges();
+            await DbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -49,12 +49,12 @@ namespace Discord_Clone.Server.Repositories
         /// </summary>
         /// <param name="User">The user whose first name to edit.</param>
         /// <param name="FirstName">The first name of the user.</param>
-        public void EditFirstName(ClaimsPrincipal User, string FirstName)
+        public async Task EditFirstName(ClaimsPrincipal User, string FirstName)
         {
             User? userEntity = GetUser(User);
 
             userEntity.FirstName = FirstName;
-            DbContext.SaveChanges();
+            await DbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -62,12 +62,12 @@ namespace Discord_Clone.Server.Repositories
         /// </summary>
         /// <param name="User">The user whose last name to edit.</param>
         /// <param name="LastName">The last name of the user.</param>
-        public void EditLastName(ClaimsPrincipal User, string LastName)
+        public async Task EditLastName(ClaimsPrincipal User, string LastName)
         {
             User? userEntity = GetUser(User);
 
             userEntity.LastName = LastName;
-            DbContext.SaveChanges();
+            await DbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -75,12 +75,12 @@ namespace Discord_Clone.Server.Repositories
         /// </summary>
         /// <param name="User">The user whose about me section to edit.</param>
         /// <param name="AboutMe">The about me section text of a user.</param>
-        public void EditAboutMe(ClaimsPrincipal User, string AboutMe)
+        public async Task EditAboutMe(ClaimsPrincipal User, string AboutMe)
         {
             User? userEntity = GetUser(User);
 
             userEntity.AboutMe = AboutMe;
-            DbContext.SaveChanges();
+            await DbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Discord_Clone.Server.Repositories
         /// </summary>
         /// <param name="User">The user whose image to store.</param>
         /// <param name="File">The file to store.</param>
-        public void StoreUserImage(ClaimsPrincipal User, IFormFile File)
+        public async Task StoreUserImage(ClaimsPrincipal User, IFormFile File)
         {
             User? userEntity = GetUser(User);
 
@@ -118,7 +118,7 @@ namespace Discord_Clone.Server.Repositories
             {
                 throw new Exception("File length is smaller than a byte.");
             }
-            DbContext.SaveChanges();
+            await DbContext.SaveChangesAsync();
         }
 
         /// <summary>

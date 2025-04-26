@@ -13,9 +13,9 @@ namespace Discord_Clone.Server.Repositories
 
         private readonly ILogger<Program> Logger = logger;
 
-        public List<UserSearchResult> UserSearch(string searchTerm)
+        public async Task<List<UserSearchResult>> UserSearch(string searchTerm)
         {
-            var Users = DbContext.Users
+            var Users = await DbContext.Users
                 .Where(u =>
                     u.UserSearchVector != null && u.UserSearchVector.Matches(EF.Functions.PlainToTsQuery("english", searchTerm)))
                 .Select(u => new UserSearchResult
@@ -26,7 +26,7 @@ namespace Discord_Clone.Server.Repositories
                     Rank = u.UserSearchVector!.Rank(EF.Functions.PlainToTsQuery(searchTerm))
                 })
                 .OrderByDescending(u => u.Rank)
-                .ToList();
+                .ToListAsync();
 
             return Users;
         }

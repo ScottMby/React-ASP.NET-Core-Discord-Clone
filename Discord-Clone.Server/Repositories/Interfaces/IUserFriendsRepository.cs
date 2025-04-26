@@ -9,6 +9,6 @@ namespace Discord_Clone.Server.Repositories.Interfaces
         /// </summary>
         /// <param name="searchTerm">The search term to find the specified user.</param>
         /// <returns>A list of users that satisfy the search term.</returns>
-        public List<UserSearchResult> UserSearch(string searchTerm);
+        public Task<List<UserSearchResult>> UserSearch(string searchTerm);
     }
 }
