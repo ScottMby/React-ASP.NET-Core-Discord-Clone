@@ -10,6 +10,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 using Discord_Clone.Server.Middleware;
+using Discord_Clone.Server.Endpoints;
 
 namespace Discord_Clone.Server
 {
@@ -59,11 +60,6 @@ namespace Discord_Clone.Server
                 });
             });
 
-            // Add services to the container.
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-
             builder.Services.AddDbContext<DiscordCloneDbContext>(options =>
             {
                 options.UseNpgsql("Server=host.docker.internal;Port=5432;Database=DiscordCloneDb;User Id=ApplicationUser;Password=ApplicationUserAdminPassword;");
@@ -76,15 +72,13 @@ namespace Discord_Clone.Server
                     .AllowAnyMethod();
             }));
 
+            builder.Services.AddOpenApi();
+            builder.Services.AddSwaggerGen();
+
             builder.Services.AddAuthorization();
 
             builder.Services.AddIdentityApiEndpoints<User>()
                 .AddEntityFrameworkStores<DiscordCloneDbContext>();
-
-            builder.Services.AddSwaggerGen(options =>
-            {
-
-            });
 
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IUserFriendsRepository, UserFriendsRepository>();
@@ -114,12 +108,13 @@ namespace Discord_Clone.Server
 
             app.UseCors("default");
 
-
-            app.MapControllers();
+            app.MapIdentityApi<User>();
 
             app.MapFallbackToFile("/index.html");
 
-            app.MapIdentityApi<User>();
+            app.MapUserEndpoints();
+
+            app.MapUserFriendsEndpoints();
 
             app.Run();
         }
