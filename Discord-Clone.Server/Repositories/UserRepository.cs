@@ -94,11 +94,15 @@ namespace Discord_Clone.Server.Repositories
 
             string filePath = "";
 
+            string extension = Path.GetExtension(File.FileName);
+
             ///!!!Important: Do not use original file name without validation & sanitization... this could lead to security issues.
             if (File.Length > 0)
             {
                 //In temporary folder. For production builds use blob storage.
                 filePath = Path.Combine("/userImages", Path.GetTempFileName());
+
+                filePath = Path.ChangeExtension(filePath, extension);
 
                 using (var stream = System.IO.File.Create(filePath))
                 {

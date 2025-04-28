@@ -83,6 +83,13 @@ namespace Discord_Clone.Server
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IUserFriendsRepository, UserFriendsRepository>();
 
+            builder.Services.AddAntiforgery(opt =>
+            {
+                opt.FormFieldName = "AntiForgeryToken";
+                opt.HeaderName = "X-CSRF-TOKEN";
+                opt.SuppressXFrameOptionsHeader = true;
+            });
+
             var app = builder.Build();
 
             app.UseDefaultFiles();
@@ -106,6 +113,8 @@ namespace Discord_Clone.Server
 
             app.UseAuthorization();
 
+            app.UseAntiforgery();
+
             app.UseCors("default");
 
             app.MapIdentityApi<User>();
@@ -115,6 +124,8 @@ namespace Discord_Clone.Server
             app.MapUserEndpoints();
 
             app.MapUserFriendsEndpoints();
+
+            app.MapAntiForgeryEndpoints();
 
             app.Run();
         }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Discord_Clone.Server.Endpoints
 {
-    public static class UserFriendsEndpoint
+    public static class UserFriendsEndpoints
     {
         public static void MapUserFriendsEndpoints(this IEndpointRouteBuilder app)
         {
