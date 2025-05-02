@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Discord_Clone.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
@@ -13,13 +14,15 @@ using NpgsqlTypes;
 namespace Discord_Clone.Server.Migrations
 {
     [DbContext(typeof(DiscordCloneDbContext))]
-    partial class DiscordCloneDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250502025733_AddValueGenerationToTables")]
+    partial class AddValueGenerationToTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -172,14 +175,18 @@ namespace Discord_Clone.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("SenderId1")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("SentTimestamp")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("FriendRequestId");
 
-                    b.HasIndex("ReceiverId");
-
                     b.HasIndex("SenderId");
+
+                    b.HasIndex("SenderId1");
 
                     b.ToTable("UserFriendRequests");
                 });
@@ -363,14 +370,14 @@ namespace Discord_Clone.Server.Migrations
                 {
                     b.HasOne("Discord_Clone.Server.Models.User", "Receiver")
                         .WithMany("ReceivedUserFriendRequests")
-                        .HasForeignKey("ReceiverId")
+                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Discord_Clone.Server.Models.User", "Sender")
-                        .WithMany("SentUserFriendRequests")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany()
+                        .HasForeignKey("SenderId1")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Receiver");
@@ -468,8 +475,6 @@ namespace Discord_Clone.Server.Migrations
                     b.Navigation("ReceivedUserFriendRequests");
 
                     b.Navigation("ReceivedUserFriends");
-
-                    b.Navigation("SentUserFriendRequests");
 
                     b.Navigation("SentUserFriends");
                 });

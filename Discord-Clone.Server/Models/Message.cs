@@ -5,7 +5,7 @@
         /// <summary>
         /// Id of the message.
         /// </summary>
-        public required string MessageId { get; set; }
+        public string MessageId { get; set; } = null!;
 
         /// <summary>
         /// Content of the message.
@@ -20,7 +20,7 @@
         /// <summary>
         /// The timestamp of the messages creation.
         /// </summary>
-        public required DateTime Timestamp { get; set; }
+        public required DateTime Timestamp { get; set; } = DateTime.Now.ToUniversalTime();
 
         /// <summary>
         /// The timestamp of when the message was last edited.
@@ -30,7 +30,7 @@
         /// <summary>
         /// Whether this message is pinned in the chat or not.
         /// </summary>
-        public bool Pinned { get; set; }
+        public required bool Pinned { get; set; } = false;
 
         /// <summary>
         /// Unicode string list for reaction emojis.
@@ -40,7 +40,7 @@
         /// <summary>
         /// The id of the chat that is 
         /// </summary>
-        public required string ChatId { get; set; }
+        public string ChatId { get; set; } = null!;
 
         /// <summary>
         /// The chat that the message is attached to.

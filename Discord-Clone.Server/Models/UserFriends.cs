@@ -5,22 +5,22 @@
         /// <summary>
         /// Id of the record of which users are friends.
         /// </summary>
-        public required string UserFriendsId { get; set; }
+        public string UserFriendsId { get; set; } = null!;
 
         /// <summary>
         /// The if of the user who originally sent the friend request.
         /// </summary>
-        public required string SenderId { get; set; }
+        public string SenderId { get; set; } = null!;
 
         /// <summary>
         /// The id of user who originally received and accepted the friend request.
         /// </summary>
-        public required string ReceiverId { get; set; }
+        public string ReceiverId { get; set; } = null!;
 
         /// <summary>
         /// The timestamp of when the friend request was accepted.
         /// </summary>
-        public DateTime FriendsSince { get; set; } = DateTime.Now;
+        public DateTime FriendsSince { get; set; } = DateTime.Now.ToUniversalTime();
 
         /// <summary>
         /// The id of the chat attached to the users' friendship.

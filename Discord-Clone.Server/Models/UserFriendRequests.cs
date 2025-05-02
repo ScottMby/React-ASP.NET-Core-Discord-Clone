@@ -8,22 +8,22 @@
         /// <summary>
         /// The id of the friend request.
         /// </summary>
-        public required string FriendRequestId { get; set; }
+        public string FriendRequestId { get; set; } = null!;
 
         /// <summary>
         /// The id of the sending user.
         /// </summary>
-        public required string SenderId { get; set; }
+        public string SenderId { get; set; } = null!;
 
         /// <summary>
         /// The id of the receiving user.
         /// </summary>
-        public required string ReceiverId { get; set; }
+        public string ReceiverId { get; set; } = null!;
 
         /// <summary>
         /// The timestamp of when the request was sent.
         /// </summary>
-        public DateTime SentTimestamp { get; set; } = DateTime.Now;
+        public DateTime SentTimestamp { get; set; } = DateTime.Now.ToUniversalTime();
 
         /// <summary>
         /// The user who sent the friend request.

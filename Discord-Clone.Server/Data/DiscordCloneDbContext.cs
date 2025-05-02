@@ -6,10 +6,10 @@ namespace Discord_Clone.Server.Data
 {
     public class DiscordCloneDbContext(DbContextOptions<DiscordCloneDbContext> options) : IdentityDbContext<User>(options)
     {
-        DbSet<UserFriends> UserFriends { get; set; }
-        DbSet<UserFriendRequests> UserFriendRequests { get; set; }
-        DbSet<Chat> Chats { get; set; }
-        DbSet<Message> Messages { get; set; }
+        public DbSet<UserFriends> UserFriends { get; set; }
+        public DbSet<UserFriendRequests> UserFriendRequests { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -28,6 +28,7 @@ namespace Discord_Clone.Server.Data
             builder.Entity<Message>(m =>
             {
                 m.HasKey(m => m.MessageId);
+                m.Property(e => e.MessageId).ValueGeneratedOnAdd();
 
                 m.HasOne(m => m.Chat)
                     .WithMany(c => c.Messages)
@@ -38,11 +39,13 @@ namespace Discord_Clone.Server.Data
             builder.Entity<Chat>(c =>
             {
                 c.HasKey(c => c.ChatId);
+                c.Property(c => c.ChatId).ValueGeneratedOnAdd();
             });
 
             builder.Entity<UserFriends>(uf =>
             {
                 uf.HasKey(uf => uf.UserFriendsId);
+                uf.Property(e => e.UserFriendsId).ValueGeneratedOnAdd();
 
                 uf.HasOne(uf => uf.Sender)
                     .WithMany(u => u.SentUserFriends)
@@ -63,6 +66,7 @@ namespace Discord_Clone.Server.Data
             builder.Entity<UserFriendRequests>(ufr =>
             {
                 ufr.HasKey(ufr => ufr.FriendRequestId);
+                ufr.Property(e => e.FriendRequestId).ValueGeneratedOnAdd();
 
                 ufr.HasOne(ufr => ufr.Sender)
                     .WithMany(u => u.SentUserFriendRequests)
@@ -71,7 +75,7 @@ namespace Discord_Clone.Server.Data
 
                 ufr.HasOne(ufr => ufr.Receiver)
                     .WithMany(u => u.ReceivedUserFriendRequests)
-                    .HasForeignKey(ufr => ufr.SenderId)
+                    .HasForeignKey(ufr => ufr.ReceiverId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
         }

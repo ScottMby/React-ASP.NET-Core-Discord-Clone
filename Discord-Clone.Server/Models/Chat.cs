@@ -5,7 +5,7 @@
         /// <summary>
         /// Id of the chat.
         /// </summary>
-        public required string ChatId { get; set; }
+        public string ChatId { get; set; } = null!;
 
         /// <summary>
         /// The record of friendship between the chatting users.

@@ -3,6 +3,7 @@ using Discord_Clone.Server.Models.Data_Transfer_Objects;
 using Discord_Clone.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Discord_Clone.Server.Endpoints
 {
@@ -17,6 +18,8 @@ namespace Discord_Clone.Server.Endpoints
                 .RequireAuthorization();
 
             usersGroup.MapGet("search", UserSearch);
+
+            usersGroup.MapPost("sendfriendrequest", SendFriendRequest);
         }
 
         /// <summary>
@@ -32,6 +35,19 @@ namespace Discord_Clone.Server.Endpoints
                 return TypedResults.Ok(userSearchResults);
             else
                 return TypedResults.NotFound();
+        }
+
+        /// <summary>
+        /// Send a user a friend request.
+        /// </summary>
+        /// <param name="userFriendsRepository">The user friends repository.</param>
+        /// <param name="sendingUser">The claims principle user who is sending the request.</param>
+        /// <param name="receivingUserId">The id of the user to receive the request.</param>
+        /// <returns></returns>
+        public static async Task<Results<Ok, BadRequest>> SendFriendRequest(IUserFriendsRepository userFriendsRepository, ClaimsPrincipal sendingUser, [FromBody] string receivingUserId)
+        {
+                await userFriendsRepository.UserFriendRequest(sendingUser, receivingUserId);
+                return TypedResults.Ok();
         }
     }
 }
