@@ -1,47 +1,90 @@
-﻿using System.Security.Claims;
+﻿using Discord_Clone.Server.Models;
+using System.Security.Claims;
 
 namespace Discord_Clone.Server.Repositories.Interfaces
 {
     public interface IUserRepository
     {
         /// <summary>
-        /// Checks that the display name of a user has been set. If not, sets the display name as a random name.
+        /// Retrieves a user by their unique identifier.
         /// </summary>
-        /// <param name="User">The user whose display name you want to check.</param>
-        public Task CheckDisplayNameValid(ClaimsPrincipal User);
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>The user object if found, otherwise null.</returns>
+        public Task<User?> GetUserById(string userId);
 
         /// <summary>
-        /// Changes the display name of a user.
+        /// Retrieves the display name of a user.
         /// </summary>
-        /// <param name="User">The user whose display name to edit.</param>
-        /// <param name="DisplayName">The display name of the user.</param>
-        public Task ChangeDisplayName(ClaimsPrincipal User, string DisplayName);
+        /// <param name="user">The user object.</param>
+        /// <returns>The display name of the user, or null if not set.</returns>
+        public Task<string?> GetUserDisplayName(User user);
 
         /// <summary>
-        /// Adds or changes the first name of a user.
+        /// Updates the display name of a user.
         /// </summary>
-        /// <param name="User">The user whose first name to edit.</param>
-        /// <param name="FirstName">The first name of the user.</param>
-        public Task EditFirstName(ClaimsPrincipal User, string FirstName);
+        /// <param name="user">The user object.</param>
+        /// <param name="displayName">The new display name to set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task SetUserDisplayName(User user, string displayName);
 
         /// <summary>
-        /// Adds or changes the last name of a user.
+        /// Retrieves the first name of a user.
         /// </summary>
-        /// <param name="User">The user whose first name to edit.</param>
-        /// <param name="LastName">The last name of the user.</param>
-        public Task EditLastName(ClaimsPrincipal User, string LastName);
+        /// <param name="user">The user object.</param>
+        /// <returns>The first name of the user, or null if not set.</returns>
+        public Task<string?> GetFirstName(User user);
 
         /// <summary>
-        /// Adds or changes the about section of a user.
+        /// Updates the first name of a user.
         /// </summary>
-        /// <param name="User">The user whose about me section to edit.</param>
-        /// <param name="AboutMe">The about me section text of a user.</param>
-        public Task EditAboutMe(ClaimsPrincipal User, string AboutMe);
+        /// <param name="user">The user object.</param>
+        /// <param name="firstName">The new first name to set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task SetFirstName(User user, string firstName);
 
         /// <summary>
-        /// Stores uploaded user images.
+        /// Retrieves the last name of a user.
         /// </summary>
-        /// <param name="File">The file to store.</param>
-        public Task StoreUserImage(ClaimsPrincipal User, IFormFile File);
+        /// <param name="user">The user object.</param>
+        /// <returns>The last name of the user, or null if not set.</returns>
+        public Task<string?> GetLastName(User user);
+
+        /// <summary>
+        /// Updates the last name of a user.
+        /// </summary>
+        /// <param name="user">The user object.</param>
+        /// <param name="lastName">The new last name to set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task SetLastName(User user, string lastName);
+
+        ///<summary>
+        /// Retrieves the "About Me" section of a user.
+        /// </summary>
+        /// <param name="user">The user object.</param>
+        /// <returns>The "About Me" section of the user, or null if not set.</returns>
+        public Task<string?> GetAboutMe(User user);
+
+        /// <summary>
+        /// Updates the "About Me" section of a user.
+        /// </summary>
+        /// <param name="user">The user object.</param>
+        /// <param name="aboutMe">The new "About Me" content to set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task SetAboutMe(User user, string aboutMe);
+
+        /// <summary>
+        /// Retrieves the photo URL of a user.
+        /// </summary>
+        /// <param name="user">The user object.</param>
+        /// <returns>The photo URL of the user, or null if not set.</returns>
+        public Task<string?> GetPhotoURL(User user);
+
+        /// <summary>
+        /// Updates the photo URL of a user.
+        /// </summary>
+        /// <param name="user">The user object.</param>
+        /// <param name="photoURL">The new photo URL to set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task SetPhotoURL(User user, string photoURL);
     }
 }

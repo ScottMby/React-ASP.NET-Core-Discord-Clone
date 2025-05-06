@@ -11,6 +11,7 @@ using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 using Discord_Clone.Server.Middleware;
 using Discord_Clone.Server.Endpoints;
+using Discord_Clone.Server.Services;
 
 namespace Discord_Clone.Server
 {
@@ -82,6 +83,8 @@ namespace Discord_Clone.Server
 
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IUserFriendsRepository, UserFriendsRepository>();
+            builder.Services.AddTransient<UserService>();
+            builder.Services.AddTransient<UserFriendsService>();
 
             builder.Services.AddAntiforgery(opt =>
             {
