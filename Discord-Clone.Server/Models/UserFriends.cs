@@ -30,7 +30,7 @@
         /// <summary>
         /// The chat object between each friend.
         /// </summary>
-        public required Chat Chat { get; set; }
+        public Chat? Chat { get; set; }
 
         /// <summary>
         /// The user who originally sent the friend request.

@@ -19,5 +19,13 @@ namespace Discord_Clone.Server.Repositories.Interfaces
         /// <param name="receiverId">The Id of the receiving user.</param>
         /// <returns></returns>
         public Task UserFriendRequest(ClaimsPrincipal sender, string receiverId);
+        
+        /// <summary>
+        /// Accepts a friend request. (Deletes request and creates the friend record).
+        /// </summary>
+        /// <param name="user">The claims principle of the user.</param>
+        /// <param name="friendRequestId">The Id of the friend request.</param>
+        /// <returns></returns>
+        public Task AcceptFriendRequest(ClaimsPrincipal user, string friendRequestId);
     }
 }

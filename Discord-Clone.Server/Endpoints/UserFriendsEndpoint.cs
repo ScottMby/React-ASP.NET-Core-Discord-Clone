@@ -13,13 +13,15 @@ namespace Discord_Clone.Server.Endpoints
         {
             var api = app.MapGroup("api");
 
-            var usersGroup = api.MapGroup("users")
+            var usersGroup = api.MapGroup("user")
                 .WithOpenApi()
                 .RequireAuthorization();
 
             usersGroup.MapGet("search", UserSearch);
 
             usersGroup.MapPost("sendfriendrequest", SendFriendRequest);
+
+            usersGroup.MapPost("acceptfriendrequest", AcceptFriendRequest);
         }
 
         /// <summary>
@@ -46,8 +48,14 @@ namespace Discord_Clone.Server.Endpoints
         /// <returns></returns>
         public static async Task<Results<Ok, BadRequest>> SendFriendRequest(IUserFriendsRepository userFriendsRepository, ClaimsPrincipal sendingUser, [FromBody] string receivingUserId)
         {
-                await userFriendsRepository.UserFriendRequest(sendingUser, receivingUserId);
-                return TypedResults.Ok();
+            await userFriendsRepository.UserFriendRequest(sendingUser, receivingUserId);
+            return TypedResults.Ok();
+        }
+
+        public static async Task<Results<Ok, NotFound>> AcceptFriendRequest(IUserFriendsRepository userFriendsRepository, ClaimsPrincipal user, [FromBody] string friendRequestId)
+        {
+            await userFriendsRepository.AcceptFriendRequest(user, friendRequestId);
+            return TypedResults.Ok();
         }
     }
 }

@@ -4,6 +4,7 @@ using Discord_Clone.Server.Models.Data_Transfer_Objects;
 using Discord_Clone.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
 
 namespace Discord_Clone.Server.Repositories
@@ -59,6 +60,36 @@ namespace Discord_Clone.Server.Repositories
             await DbContext.SaveChangesAsync();
         }
 
+        public async Task AcceptFriendRequest(ClaimsPrincipal user, string FriendRequestId)
+        {
+            User userObject = GetUser(user);
+            //Check request exists
+            UserFriendRequests request = DbContext.UserFriendRequests.Where(fr => fr.FriendRequestId == FriendRequestId).FirstOrDefault() ?? throw new Exception("Request does not exist");
+            //Check user is receiver of request
+            if (request.ReceiverId != userObject.Id)
+            {
+                throw new Exception("User is not a receiver of this request");
+            }
+            //Delete Request
+            DbContext.UserFriendRequests.Remove(request);
+            //Add Friend
+            UserFriends userFriends = new UserFriends
+            {
+                Receiver = request.Receiver,
+                ReceiverId = request.ReceiverId,
+                Sender = request.Sender,
+                SenderId = request.SenderId,
+            };
+            Chat chat = new Chat
+            {
+                UserFriends = userFriends
+            };
+            userFriends.Chat = chat;
+            DbContext.UserFriends.Add(userFriends);
+
+            await DbContext.SaveChangesAsync();
+        }
+
         /// <summary>
         /// Gets the user from the database.
         /// </summary>
@@ -73,5 +104,6 @@ namespace Discord_Clone.Server.Repositories
 
             throw new Exception("Found user ID {userId} but could not find user." + userId);
         }
+
     }
 }
