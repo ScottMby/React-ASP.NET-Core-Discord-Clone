@@ -47,27 +47,32 @@ namespace Discord_Clone.Server.Repositories
 
         public async Task SetAboutMe(User user, string aboutMe)
         {
-           await DbContext.Users.Where(u => u.Id == user.Id).ExecuteUpdateAsync(u => u.SetProperty(u => u.AboutMe, aboutMe));
+            DbContext.Users.Where(u => u.Id == user.Id).First().AboutMe = aboutMe;
+            await DbContext.SaveChangesAsync();
         }
 
         public async Task SetFirstName(User user, string firstName)
         {
-            await DbContext.Users.Where(u => u.Id == user.Id).ExecuteUpdateAsync(u => u.SetProperty(u => u.FirstName, firstName));
+            DbContext.Users.Where(u => u.Id == user.Id).First().FirstName = firstName;
+            await DbContext.SaveChangesAsync();
         }
 
         public async Task SetLastName(User user, string lastName)
         {
-            await DbContext.Users.Where(u => u.Id == user.Id).ExecuteUpdateAsync(u => u.SetProperty(u => u.LastName, lastName));
+            DbContext.Users.Where(u => u.Id == user.Id).First().LastName = lastName;
+            await DbContext.SaveChangesAsync();
         }
 
         public async Task SetPhotoURL(User user, string photoURL)
         {
-            await DbContext.Users.Where(u => u.Id == user.Id).ExecuteUpdateAsync(u => u.SetProperty(u => u.PhotoURL, photoURL));
+            DbContext.Users.Where(u => u.Id == user.Id).First().PhotoURL = photoURL;
+            await DbContext.SaveChangesAsync();
         }
 
         public async Task SetUserDisplayName(User user, string displayName)
         {
-            await DbContext.Users.Where(u => u.Id == user.Id).ExecuteUpdateAsync(u => u.SetProperty(u => u.DisplayName, displayName));
+            DbContext.Users.Where(u => u.Id == user.Id).First().DisplayName = displayName;
+            await DbContext.SaveChangesAsync();
         }
     }
 }

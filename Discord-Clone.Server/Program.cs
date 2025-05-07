@@ -93,6 +93,8 @@ namespace Discord_Clone.Server
                 opt.SuppressXFrameOptionsHeader = true;
             });
 
+            builder.Services.AddHttpContextAccessor();
+
             var app = builder.Build();
 
             app.UseDefaultFiles();
