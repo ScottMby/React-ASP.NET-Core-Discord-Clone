@@ -5,6 +5,8 @@ using Discord_Clone.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RandomFriendlyNameGenerator;
+using RandomFriendlyNameGenerator.Data;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace Discord_Clone.Server.Services
@@ -39,6 +41,18 @@ namespace Discord_Clone.Server.Services
         /// <param name="displayName">The display name of the user.</param>
         public async Task ChangeDisplayName(ClaimsPrincipal user, string displayName)
         {
+            if (displayName.Length > 255)
+            {
+                throw new Exception("Display name is too long. Please use a shorter display name.");
+            }
+            if (displayName.Length < 3)
+            {
+                throw new Exception("Display name is too short. Please use a longer display name.");
+            }
+            if (String.IsNullOrWhiteSpace(displayName))
+            {
+                throw new Exception("Display name cannot be just spaces");
+            }
             User userEntity = await GetUser(user);
 
             await UserRepository.SetUserDisplayName(userEntity, displayName);
@@ -49,8 +63,21 @@ namespace Discord_Clone.Server.Services
         /// </summary>
         /// <param name="user">The user whose first name to edit.</param>
         /// <param name="firstName">The first name of the user.</param>
+        
         public async Task EditFirstName(ClaimsPrincipal user, string firstName)
         {
+            if (firstName.Length > 50)
+            {
+                throw new Exception("First name is too long, Please use a shorter name.");
+            }
+            if (firstName.Length < 2)
+            {
+                throw new Exception("First name is too short, Please use a longer name.");
+            }
+            if (String.IsNullOrWhiteSpace(firstName))
+            {
+                throw new Exception("First name cannot just be spaces.");
+            }
             User userEntity = await GetUser(user);
 
             await UserRepository.SetFirstName(userEntity, firstName);
@@ -63,6 +90,18 @@ namespace Discord_Clone.Server.Services
         /// <param name="lastName">The last name of the user.</param>
         public async Task EditLastName(ClaimsPrincipal user, string lastName)
         {
+            if (lastName.Length > 255)
+            {
+                throw new Exception("Last name is too long, Please use a shorter name.");
+            }
+            if (lastName.Length < 2)
+            {
+                throw new Exception("Last name is too short, Please use a longer name.");
+            }
+            if (String.IsNullOrWhiteSpace(lastName))
+            {
+                throw new Exception("Last name cannot just be spaces.");
+            }
             User userEntity = await GetUser(user);
 
             await UserRepository.SetLastName(userEntity, lastName);
@@ -75,6 +114,10 @@ namespace Discord_Clone.Server.Services
         /// <param name="aboutMe">The about me section text of a user.</param>
         public async Task EditAboutMe(ClaimsPrincipal user, string aboutMe)
         {
+            if (aboutMe.Length > 255)
+            {
+                throw new Exception("About me section is too long.");
+            }
             User userEntity = await GetUser(user);
 
             await UserRepository.SetAboutMe(userEntity, aboutMe);

@@ -8,6 +8,9 @@ EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "discord-clone.client", "discord-clone.client\discord-clone.client.esproj", "{5BFEA187-1B5F-42BE-B874-713E348D6400}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord-Clone.Server.Tests", "Discord-Clone.Server.Tests\Discord-Clone.Server.Tests.csproj", "{42256136-0BE2-4430-96A0-AF1D18D90A1B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7AE368A6-5296-43C4-B87C-686880B21261} = {7AE368A6-5296-43C4-B87C-686880B21261}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20717AF3-EF50-4EF4-9D00-2174A888B2BC}
 	EndGlobalSection
 EndGlobal
