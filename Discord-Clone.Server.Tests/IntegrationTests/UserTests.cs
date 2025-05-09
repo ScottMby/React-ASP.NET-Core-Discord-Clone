@@ -23,8 +23,8 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
         public async Task CheckDisplayName_NullName_CreatesRandomName()
         {
             //Arrange
-            ClaimsPrincipal userClaimsPrincipal = UserClaimsPrincipal;
             await CreateAuthenticatedUser();
+            ClaimsPrincipal userClaimsPrincipal = UserClaimsPrincipal;
 
             //Act
             await UserEndpoints.CheckDisplayName(UserService, userClaimsPrincipal);
