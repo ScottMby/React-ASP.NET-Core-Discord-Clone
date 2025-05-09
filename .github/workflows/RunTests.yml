@@ -1,45 +1,51 @@
 name: Discord-Clone Tests
 
 on:
-    push:
-      branches:
-        - master
-    pull_request:
-      branches:
-        - master
-    workflow_dispatch:
+   push:
+     branches:
+       - master
+   pull_request:
+     branches:
+       - master
+   workflow_dispatch:
 
 jobs:
-    test:
-      runs-on: ubuntu-latest
+   test:
+     runs-on: ubuntu-latest
 
-      steps:
-        # Checkout the repository
-        - name: Checkout code
-          uses: actions/checkout@v3
+     steps:
+       # Checkout the repository
+       - name: Checkout code
+         uses: actions/checkout@v3
 
-        # Set up .NET
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v3
-          with:
-            dotnet-version: '9.0.x'
+       # Set up .NET
+       - name: Setup .NET
+         uses: actions/setup-dotnet@v3
+         with:
+           dotnet-version: '9.0.x'
 
-        # Restore dependencies
-        - name: Restore dependencies
-          run: dotnet restore ./Discord-Clone.Server
+       # Restore dependencies
+       - name: Restore dependencies
+         run: dotnet restore ./Discord-Clone.Server
 
-        # Build the application
-        - name: Build application
-          run: dotnet build ./Discord-Clone.Server --configuration Release --no-restore
+       # Build the application
+       - name: Build application
+         run: dotnet build ./Discord-Clone.Server --configuration Release --no-restore
 
-        # Run tests
-        - name: Run tests
-          run: dotnet test ./Discord-Clone.Server.Tests/Discord-Clone.Server.Tests.csproj --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./Discord-Clone.Server.Tests/TestResults
-          continue-on-error: true
+       # Run tests
+       - name: Run tests
+         id: test
+         run: dotnet test ./Discord-Clone.Server.Tests/Discord-Clone.Server.Tests.csproj --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./Discord-Clone.Server.Tests/TestResults
+         continue-on-error: true
 
-        # Upload test results
-        - name: Upload test results
-          uses: actions/upload-artifact@v4
-          with:
-            name: test-results
-            path: ./Discord-Clone.Server.Tests/TestResults/
+       # Upload test results
+       - name: Upload test results
+         uses: actions/upload-artifact@v4
+         with:
+           name: test-results
+           path: ./Discord-Clone.Server.Tests/TestResults/
+
+       # Fail the job if tests fail
+       - name: Fail job if tests failed
+         if: steps.test.outcome == 'failure'
+         run: exit 1
