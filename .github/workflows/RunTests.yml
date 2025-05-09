@@ -1,34 +1,37 @@
 name: Discord-Clone Tests
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-  workflow_dispatch:
-  
+ push:
+   branches:
+     - master
+ pull_request:
+   branches:
+     - master
+ workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+ test:
+   runs-on: ubuntu-latest
 
-    steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+   steps:
+     # Checkout the repository
+     - name: Checkout code
+       uses: actions/checkout@v3
 
-      # Set up .NET
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '9.0.x'
+     # Set up .NET
+     - name: Setup .NET
+       uses: actions/setup-dotnet@v3
+       with:
+         dotnet-version: '9.0.x'
 
-      # Build the application using Docker
-      - name: Build with Docker
-        run: docker build ./Discord-Clone.Server --file ./Discord-Clone.Server/Dockerfile 
+     # Restore dependencies
+     - name: Restore dependencies
+       run: dotnet restore ./src/Discord-Clone.Server
 
-      # Run tests
-      - name: Run tests
-        run: dotnet test --no-build --verbosity normal
+     # Build the application
+     - name: Build application
+       run: dotnet build ./src/Discord-Clone.Server --configuration Release --no-restore
+
+     # Run tests
+     - name: Run tests
+       run: dotnet test ./src/Discord-Clone.Server --no-build --verbosity normal
