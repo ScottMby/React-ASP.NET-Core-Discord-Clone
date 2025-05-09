@@ -34,7 +34,7 @@ jobs:
 
         # Run tests and fail on test failure
         - name: Run tests
-          run: dotnet test ./Discord-Clone.Server.Tests/Discord-Clone.Server.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --no-restore --results-directory ./Discord-Clone.Server.Tests/TestResults
+          run: dotnet test ./Discord-Clone.Server.Tests/Discord-Clone.Server.Tests.csproj --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./Discord-Clone.Server.Tests/TestResults
 
         # Upload test results
         - name: Upload test results
