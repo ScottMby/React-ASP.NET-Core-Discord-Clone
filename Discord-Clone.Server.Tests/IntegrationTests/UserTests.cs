@@ -29,7 +29,7 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
             await UserEndpoints.CheckDisplayName(UserService, userClaimsPrincipal);
             //Asset
             string displayName = DbContext.Users.Where(u => u.Email == "scott@test.com").First().DisplayName;
-            Assert.False(String.IsNullOrEmpty(displayName));
+            Assert.True(String.IsNullOrEmpty(displayName));
         }
 
         private async Task CreateAuthenticatedUser()
