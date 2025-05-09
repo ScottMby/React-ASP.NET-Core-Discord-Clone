@@ -1,0 +1,32 @@
+name: Discord-Clone Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      # Build the application using Docker
+      - name: Build with Docker
+        run: docker build -t discord-clone .
+
+      # Run tests
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
