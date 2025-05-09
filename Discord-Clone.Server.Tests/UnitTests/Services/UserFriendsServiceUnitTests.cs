@@ -21,7 +21,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
         readonly Mock<IUserRepository> mockUserRepository;
         readonly Mock<IUserFriendsRepository> mockUserFriendsRepository;
         readonly Mock<UserManager<User>> mockUserManager;
-        readonly Mock<ILogger<Program>> mockLogger;
+        readonly Mock<ILogger<UserFriendsService>> mockUserFriendsLogger;
 
 
         public UserFriendsServiceUnitTests()
@@ -43,7 +43,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                 .Setup(um => um.GetUserId(It.IsAny<ClaimsPrincipal>()))
                 .Returns("mockUserId");
 
-            mockLogger = new Mock<ILogger<Program>>();
+            mockUserFriendsLogger = new Mock<ILogger<UserFriendsService>>();
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     return userSearchResults;
                 });
 
-            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act
             List<UserSearchResult> results = await userFriendService.UserSearch(new ClaimsPrincipal(), "test");
@@ -116,7 +116,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     return userSearchResults;
                 });
 
-            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act
             List<UserSearchResult> results = await userFriendService.UserSearch(new ClaimsPrincipal(), "test");
@@ -157,7 +157,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     userFriendRequestResult = userFriendRequest;
                 });
 
-            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act
             await userFriendService.UserFriendRequest(new ClaimsPrincipal(), "sendingUserId");
@@ -201,7 +201,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     userFriendRequestResult = userFriendRequest;
                 });
 
-            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -236,7 +236,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     userFriendRequestResult = userFriendRequest;
                 });
 
-            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -270,7 +270,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     userFriendRequestResult = userFriendRequest;
                 });
 
-            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -310,7 +310,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     userFriendRequestResult = userFriendRequest;
                 });
 
-            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -359,7 +359,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     userFriendsResult = userFriends;
                 });
 
-            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act
             await userFriendsService.AcceptFriendRequest(new ClaimsPrincipal(), "test");
@@ -414,7 +414,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     userFriendsResult = userFriends;
                 });
 
-            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -457,7 +457,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                     userFriendsResult = userFriends;
                 });
 
-            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -499,7 +499,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             mockUserFriendsRepository
                 .Setup(ufr => ufr.DeleteFriendRequest(It.IsAny<string>()));
 
-            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act
             await userFriendsService.DeclineFriendRequest(new ClaimsPrincipal(), "test");
@@ -541,7 +541,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             mockUserFriendsRepository
                 .Setup(ufr => ufr.DeleteFriendRequest(It.IsAny<string>()));
 
-            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -577,7 +577,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             mockUserFriendsRepository
                 .Setup(ufr => ufr.DeleteFriendRequest(It.IsAny<string>()));
 
-            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>

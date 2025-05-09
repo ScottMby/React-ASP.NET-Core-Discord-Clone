@@ -16,7 +16,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
 
         readonly Mock<IUserRepository> mockUserRepository;
         readonly Mock<UserManager<User>> mockUserManager;
-        readonly Mock<ILogger<Program>> mockLogger;
+        readonly Mock<ILogger<UserService>> mockLogger;
 
 
         public UserServiceUnitTests()
@@ -36,7 +36,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                 .Setup(um => um.GetUserId(It.IsAny<ClaimsPrincipal>()))
                 .Returns("mockUserId");
 
-            mockLogger = new Mock<ILogger<Program>>();
+            mockLogger = new Mock<ILogger<UserService>>();
         }
 
         public void Dispose()
