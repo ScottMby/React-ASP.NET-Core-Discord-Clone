@@ -24,12 +24,13 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
         {
             //Arrange
             ClaimsPrincipal userClaimsPrincipal = UserClaimsPrincipal;
-            
+            await CreateAuthenticatedUser();
+
             //Act
             await UserEndpoints.CheckDisplayName(UserService, userClaimsPrincipal);
             //Asset
-            string displayName = DbContext.Users.Where(u => u.Email == "scott@test.com").First().DisplayName;
-            Assert.True(String.IsNullOrEmpty(displayName));
+            string? displayName = DbContext.Users.Where(u => u.Email == "scott@test.com").First().DisplayName;
+            Assert.False(String.IsNullOrEmpty(displayName));
         }
 
         private async Task CreateAuthenticatedUser()

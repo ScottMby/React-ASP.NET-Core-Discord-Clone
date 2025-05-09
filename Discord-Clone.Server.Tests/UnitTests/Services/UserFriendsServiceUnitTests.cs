@@ -470,7 +470,6 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
         public async Task DeclineFriendRequest_Success()
         {
             //Arrange
-            UserFriends userFriendsResult = null!;
 
             User sender = new()
             {
@@ -512,7 +511,6 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
         public async Task DeclineFriendRequest_Exception_UserNotReceiver()
         {
             //Arrange
-            UserFriends userFriendsResult = null!;
 
             User sender = new()
             {
@@ -554,7 +552,6 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
         public async Task DeclineFriendRequest_RequestDoesNotExist()
         {
             //Arrange
-            UserFriends userFriendsResult = null!;
 
             User sender = new()
             {
