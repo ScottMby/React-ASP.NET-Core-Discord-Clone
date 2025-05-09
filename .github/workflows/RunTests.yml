@@ -34,4 +34,4 @@ jobs:
 
      # Run tests
      - name: Run tests
-       run: dotnet test ./Discord-Clone.Server.Tests.csproj --configuration Release --no-build --verbosity normal
+       run: dotnet test ./Discord-Clone.Server.Tests/Discord-Clone.Server.Tests.csproj --configuration Release --no-build --verbosity normal
