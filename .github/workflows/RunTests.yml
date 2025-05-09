@@ -32,6 +32,10 @@ jobs:
      - name: Build application
        run: dotnet build ./Discord-Clone.Server --configuration Release --no-restore
 
+      # Restore dependencies
+     - name: Restore dependencies
+       run: dotnet restore ./Discord-Clone.Server.Tests
+
      # Run tests
      - name: Run tests
-       run: dotnet test ./Discord-Clone.Server --no-build --verbosity normal
+       run: dotnet test ./Discord-Clone.Server.Tests --no-build --verbosity normal
