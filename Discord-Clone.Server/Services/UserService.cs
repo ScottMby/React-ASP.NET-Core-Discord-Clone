@@ -11,13 +11,13 @@ using System.Security.Claims;
 
 namespace Discord_Clone.Server.Services
 {
-    public class UserService(IUserRepository userRepository, UserManager<User> userManager, ILogger<Program> logger)
+    public class UserService(IUserRepository userRepository, UserManager<User> userManager, ILogger<UserService> logger)
     {
         private IUserRepository UserRepository { get; set; } = userRepository;
 
         private UserManager<User> UserManager { get; set; } = userManager;
 
-        private ILogger<Program> Logger { get; set; } = logger;
+        private ILogger<UserService> Logger { get; set; } = logger;
 
         /// <summary>
         /// Checks that the display name of a user has been set. If not, sets the display name as a random name.

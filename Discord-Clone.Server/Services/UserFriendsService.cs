@@ -8,12 +8,12 @@ using Discord_Clone.Server.Repositories.Interfaces;
 
 namespace Discord_Clone.Server.Services
 {
-    public class UserFriendsService(IUserRepository userRepository, IUserFriendsRepository userFriendsRepository, ILogger<Program> logger, UserManager<User> userManager)
+    public class UserFriendsService(IUserRepository userRepository, IUserFriendsRepository userFriendsRepository, ILogger<UserFriendsService> logger, UserManager<User> userManager)
     {
         private IUserRepository UserRepository { get; set; } = userRepository;
         private IUserFriendsRepository UserFriendsRepository { get; set; } = userFriendsRepository;
 
-        private ILogger<Program> Logger { get; set; } = logger;
+        private ILogger<UserFriendsService> Logger { get; set; } = logger;
 
         private UserManager<User> UserManager { get; set; } = userManager;
 
