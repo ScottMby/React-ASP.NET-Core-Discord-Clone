@@ -27,7 +27,7 @@ jobs:
 
       # Build the application using Docker
       - name: Build with Docker
-        run: docker build ./Discord-Clone.Server ./Discord-Clone.Server/Dockerfile 
+        run: docker build ./Discord-Clone.Server --file ./Discord-Clone.Server/Dockerfile 
 
       # Run tests
       - name: Run tests
