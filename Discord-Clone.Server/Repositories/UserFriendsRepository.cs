@@ -42,6 +42,7 @@ namespace Discord_Clone.Server.Repositories
         public async Task DeleteFriendRequest(string friendRequestId)
         {
             DbContext.UserFriendRequests.Remove(await GetFriendRequest(friendRequestId));
+            await DbContext.SaveChangesAsync();
         }
 
         public async Task<UserFriendRequests> GetFriendRequest(string friendRequestId)

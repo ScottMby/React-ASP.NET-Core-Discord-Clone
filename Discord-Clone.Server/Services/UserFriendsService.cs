@@ -17,7 +17,12 @@ namespace Discord_Clone.Server.Services
 
         private UserManager<User> UserManager { get; set; } = userManager;
 
-
+        /// <summary>
+        /// Searches for users based on a search term, excluding the current user.
+        /// </summary>
+        /// <param name="user">The claims principal of the user performing the search.</param>
+        /// <param name="searchTerm">The term to search for matching users.</param>
+        /// <returns>A list of users matching the search term, excluding the current user.</returns>
         public async Task<List<UserSearchResult>> UserSearch(ClaimsPrincipal user, string searchTerm)
         {
             User userEntity = await GetUser(user);
@@ -27,23 +32,29 @@ namespace Discord_Clone.Server.Services
             return results;
         }
 
+        /// <summary>
+        /// Sends a friend request from the sender to the specified receiver.
+        /// </summary>
+        /// <param name="sender">The claims principal of the user sending the friend request.</param>
+        /// <param name="receiverId">The ID of the user to receive the friend request.</param>
+        /// <exception cref="Exception">Thrown if the sender tries to send a request to themselves, the receiver does not exist, a pending request already exists, or the users are already friends.</exception>
         public async Task UserFriendRequest(ClaimsPrincipal sender, string receiverId)
         {
             User sendingUser = await GetUser(sender);
 
-            if(sendingUser.Id == receiverId)
+            if (sendingUser.Id == receiverId)
             {
                 throw new Exception("Users can't send friend requests to themselves. Go make some friends.");
             }
 
             User receivingUser = await UserRepository.GetUserById(receiverId) ?? throw new Exception("Could Not Find Receiving User");
 
-            if(await UserFriendsRepository.CheckUserHasPendingFriendRequest(sendingUser, receiverId))
+            if (await UserFriendsRepository.CheckUserHasPendingFriendRequest(sendingUser, receiverId))
             {
                 throw new Exception("User already has a pending friend request.");
             }
 
-            if(await UserFriendsRepository.CheckUserIsFriends(sendingUser, receiverId))
+            if (await UserFriendsRepository.CheckUserIsFriends(sendingUser, receiverId))
             {
                 throw new Exception("User is already a friend.");
             }
@@ -59,18 +70,24 @@ namespace Discord_Clone.Server.Services
             await UserFriendsRepository.AddUserFriendRequest(userFriendRequest);
         }
 
-        public async Task AcceptFriendRequest(ClaimsPrincipal user, string FriendRequestId)
+        /// <summary>
+        /// Accepts a friend request and establishes a friendship between the users.
+        /// </summary>
+        /// <param name="user">The claims principal of the user accepting the friend request.</param>
+        /// <param name="friendRequestId">The ID of the friend request to accept.</param>
+        /// <exception cref="Exception">Thrown if the request does not exist or the user is not the receiver of the request.</exception>
+        public async Task AcceptFriendRequest(ClaimsPrincipal user, string friendRequestId)
         {
             User userObject = await GetUser(user);
             //Check request exists
-            UserFriendRequests request = (await UserFriendsRepository.GetFriendRequest(FriendRequestId)) ?? throw new Exception("Request does not exist.");
+            UserFriendRequests request = (await UserFriendsRepository.GetFriendRequest(friendRequestId)) ?? throw new Exception("Request does not exist.");
             //Check user is receiver of request
             if (request.ReceiverId != userObject.Id)
             {
                 throw new Exception("User is not receiver of this request");
             }
             //Delete Request
-            await UserFriendsRepository.DeleteFriendRequest(FriendRequestId);
+            await UserFriendsRepository.DeleteFriendRequest(friendRequestId);
             //Add Friend
             UserFriends userFriends = new()
             {
@@ -88,6 +105,26 @@ namespace Discord_Clone.Server.Services
         }
 
         /// <summary>
+        /// Declines a friend request, removing it from the system.
+        /// </summary>
+        /// <param name="user">The claims principal of the user declining the friend request.</param>
+        /// <param name="friendRequestId">The ID of the friend request to decline.</param>
+        /// <exception cref="Exception">Thrown if the request does not exist or the user is not the receiver of the request.</exception>
+        public async Task DeclineFriendRequest(ClaimsPrincipal user, string friendRequestId)
+        {
+            User userObject = await GetUser(user);
+
+            UserFriendRequests request = (await UserFriendsRepository.GetFriendRequest(friendRequestId) ?? throw new Exception("Request does not exist"));
+
+            if (request.ReceiverId != userObject.Id)
+            {
+                throw new Exception("User is not receiver of this request");
+            }
+
+            await UserFriendsRepository.DeleteFriendRequest(friendRequestId);
+        }
+
+        /// <summary>
         /// Gets the user from the database.
         /// </summary>
         /// <param name="user">The claims principle of the user.</param>
@@ -101,5 +138,6 @@ namespace Discord_Clone.Server.Services
 
             throw new Exception("Found user ID {userId} but could not find user." + userId);
         }
+        
     }
 }

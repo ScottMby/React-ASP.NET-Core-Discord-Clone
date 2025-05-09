@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -462,6 +463,126 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             await Assert.ThrowsAsync<Exception>(async () =>
             {
                 await userFriendsService.AcceptFriendRequest(new ClaimsPrincipal(), "test");
+            });
+        }
+
+        [Fact]
+        public async Task DeclineFriendRequest_Success()
+        {
+            //Arrange
+            UserFriends userFriendsResult = null!;
+
+            User sender = new()
+            {
+                Id = "receiverUserId"
+            };
+
+            User receiver = new()
+            {
+                Id = "senderUserId"
+            };
+
+            mockUserRepository
+                .Setup(ur => ur.GetUserById(It.IsAny<string>()))
+                .ReturnsAsync(receiver);
+
+            mockUserFriendsRepository
+                .Setup(ufr => ufr.GetFriendRequest(It.IsAny<string>()))
+                .ReturnsAsync(new UserFriendRequests
+                {
+                    Receiver = receiver,
+                    ReceiverId = receiver.Id,
+                    Sender = sender,
+                    SenderId = sender.Id
+                });
+
+            mockUserFriendsRepository
+                .Setup(ufr => ufr.DeleteFriendRequest(It.IsAny<string>()));
+
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+
+            //Act
+            await userFriendsService.DeclineFriendRequest(new ClaimsPrincipal(), "test");
+
+            //Assert
+            mockUserFriendsRepository.Verify(ufr => ufr.DeleteFriendRequest(It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeclineFriendRequest_Exception_UserNotReceiver()
+        {
+            //Arrange
+            UserFriends userFriendsResult = null!;
+
+            User sender = new()
+            {
+                Id = "receiverUserId"
+            };
+
+            User receiver = new()
+            {
+                Id = "senderUserId"
+            };
+
+            mockUserRepository
+                .Setup(ur => ur.GetUserById(It.IsAny<string>()))
+                .ReturnsAsync(sender);
+
+            mockUserFriendsRepository
+                .Setup(ufr => ufr.GetFriendRequest(It.IsAny<string>()))
+                .ReturnsAsync(new UserFriendRequests
+                {
+                    Receiver = receiver,
+                    ReceiverId = receiver.Id,
+                    Sender = sender,
+                    SenderId = sender.Id
+                });
+
+            mockUserFriendsRepository
+                .Setup(ufr => ufr.DeleteFriendRequest(It.IsAny<string>()));
+
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+
+            //Act & Assert
+            await Assert.ThrowsAsync<Exception>(async () =>
+            {
+                await userFriendsService.DeclineFriendRequest(new ClaimsPrincipal(), "test");
+            });
+        }
+
+        [Fact]
+        public async Task DeclineFriendRequest_RequestDoesNotExist()
+        {
+            //Arrange
+            UserFriends userFriendsResult = null!;
+
+            User sender = new()
+            {
+                Id = "receiverUserId"
+            };
+
+            User receiver = new()
+            {
+                Id = "senderUserId"
+            };
+
+            mockUserRepository
+                .Setup(ur => ur.GetUserById(It.IsAny<string>()))
+                .ReturnsAsync(receiver);
+
+            mockUserFriendsRepository
+                .Setup(ufr => ufr.GetFriendRequest(It.IsAny<string>()))
+                .ReturnsAsync((UserFriendRequests)null!);
+
+            mockUserFriendsRepository
+                .Setup(ufr => ufr.DeleteFriendRequest(It.IsAny<string>()));
+
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockLogger.Object, mockUserManager.Object);
+
+            //Act & Assert
+            await Assert.ThrowsAsync<Exception>(async () =>
+            {
+                await userFriendsService.DeclineFriendRequest(new ClaimsPrincipal(), "test");
             });
         }
     }

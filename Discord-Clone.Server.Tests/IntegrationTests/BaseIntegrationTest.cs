@@ -21,6 +21,7 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
         protected readonly DiscordCloneDbContext DbContext;
         protected readonly UserManager<User> UserManager;
         protected readonly UserService UserService;
+        protected readonly UserFriendsService UserFriendsService;
         protected readonly SignInManager<User> SignInManager;
 
         protected BaseIntegrationTest(IntegrationTestWebAppFactory factory)
@@ -29,6 +30,7 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
             DbContext = _scope.ServiceProvider.GetRequiredService<DiscordCloneDbContext>();
             DbContext.Database.Migrate();
             UserService = _scope.ServiceProvider.GetRequiredService<UserService>();
+            UserFriendsService = _scope.ServiceProvider.GetRequiredService<UserFriendsService>();
             UserManager = _scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             SignInManager = _scope.ServiceProvider.GetRequiredService<SignInManager<User>>();
         }

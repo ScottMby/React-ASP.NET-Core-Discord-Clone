@@ -30,7 +30,7 @@ namespace Discord_Clone.Server.Services
             if (string.IsNullOrEmpty(userEntity.DisplayName))
             {
                 // Generate Random Display Name
-                await UserRepository.SetUserDisplayName(userEntity, NameGenerator.Identifiers.Get(IdentifierTemplate.SilentBob, NameOrderingStyle.SilentBobStyle));
+                await UserRepository.SetUserDisplayName(userEntity, NameGenerator.Identifiers.Get(IdentifierTemplate.SilentBob, NameOrderingStyle.SilentBobStyle)); //NameGenerator is quite slow. Maybe replace.
             }
         }
 
