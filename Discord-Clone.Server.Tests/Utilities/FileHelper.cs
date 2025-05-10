@@ -15,5 +15,14 @@ namespace Discord_Clone.Server.Tests.Utilities
                 ContentType = contentType
             };
         }
+
+        public static IFormFile CreateFormFileFromStream(Stream stream, string fileName, string contentType = "text/plain")
+        {
+            return new FormFile(stream, 0, stream.Length, "file", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
+            };
+        }
     }
 }

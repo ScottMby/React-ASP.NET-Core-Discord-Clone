@@ -12,11 +12,11 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
 {
     public class UserTests : BaseIntegrationTest
     {
-        private ClaimsPrincipal UserClaimsPrincipal;
+        private ClaimsPrincipal UserClaimsPrincipal = null!;
 
         public UserTests(IntegrationTestWebAppFactory factory) : base(factory)
         {
-            var _context = new DefaultHttpContext();
+            _ = new DefaultHttpContext();
         }
 
         [Fact]
