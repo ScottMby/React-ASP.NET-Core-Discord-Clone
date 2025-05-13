@@ -2,6 +2,7 @@
 using Discord_Clone.Server.Models;
 using Discord_Clone.Server.Repositories;
 using Discord_Clone.Server.Repositories.Interfaces;
+using Discord_Clone.Server.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RandomFriendlyNameGenerator;
@@ -43,15 +44,15 @@ namespace Discord_Clone.Server.Services
         {
             if (displayName.Length > 255)
             {
-                throw new Exception("Display name is too long. Please use a shorter display name.");
+                throw new BadRequestException("Display name is too long. Please use a shorter display name.");
             }
             if (displayName.Length < 3)
             {
-                throw new Exception("Display name is too short. Please use a longer display name.");
+                throw new BadRequestException("Display name is too short. Please use a longer display name.");
             }
             if (String.IsNullOrWhiteSpace(displayName))
             {
-                throw new Exception("Display name cannot be just spaces");
+                throw new BadRequestException("Display name cannot be just spaces");
             }
             User userEntity = await GetUser(user);
 
@@ -68,15 +69,15 @@ namespace Discord_Clone.Server.Services
         {
             if (firstName.Length > 50)
             {
-                throw new Exception("First name is too long, Please use a shorter name.");
+                throw new BadRequestException("First name is too long, Please use a shorter name.");
             }
             if (firstName.Length < 2)
             {
-                throw new Exception("First name is too short, Please use a longer name.");
+                throw new BadRequestException("First name is too short, Please use a longer name.");
             }
             if (String.IsNullOrWhiteSpace(firstName))
             {
-                throw new Exception("First name cannot just be spaces.");
+                throw new BadRequestException("First name cannot just be spaces.");
             }
             User userEntity = await GetUser(user);
 
@@ -92,15 +93,15 @@ namespace Discord_Clone.Server.Services
         {
             if (lastName.Length > 255)
             {
-                throw new Exception("Last name is too long, Please use a shorter name.");
+                throw new BadRequestException("Last name is too long, Please use a shorter name.");
             }
             if (lastName.Length < 2)
             {
-                throw new Exception("Last name is too short, Please use a longer name.");
+                throw new BadRequestException("Last name is too short, Please use a longer name.");
             }
             if (String.IsNullOrWhiteSpace(lastName))
             {
-                throw new Exception("Last name cannot just be spaces.");
+                throw new BadRequestException("Last name cannot just be spaces.");
             }
             User userEntity = await GetUser(user);
 
@@ -116,7 +117,7 @@ namespace Discord_Clone.Server.Services
         {
             if (aboutMe.Length > 255)
             {
-                throw new Exception("About me section is too long.");
+                throw new BadRequestException("About me section is too long.");
             }
             User userEntity = await GetUser(user);
 
@@ -156,7 +157,7 @@ namespace Discord_Clone.Server.Services
             }
             else
             {
-                throw new Exception("File length is smaller than a byte.");
+                throw new BadRequestException("File length is smaller than a byte.");
             }
         }
 
@@ -167,12 +168,12 @@ namespace Discord_Clone.Server.Services
         /// <returns>The user.</returns>
         private async Task<User> GetUser(ClaimsPrincipal user)
         {
-            string? userId = UserManager.GetUserId(user) ?? throw new Exception("User's id could not be found. User: " + user);
+            string? userId = UserManager.GetUserId(user) ?? throw new NotFoundException("User's id could not be found. User: " + user);
             User? userEntity = await UserRepository.GetUserById(userId);
             if (userEntity != null)
                 return userEntity;
 
-            throw new Exception("Found user ID {userId} but could not find user." + userId);
+            throw new NotFoundException("Found user ID {userId} but could not find user." + userId);
         }
     }
 }

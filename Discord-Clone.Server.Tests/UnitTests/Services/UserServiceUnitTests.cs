@@ -2,6 +2,7 @@
 using Discord_Clone.Server.Repositories.Interfaces;
 using Discord_Clone.Server.Services;
 using Discord_Clone.Server.Tests.Utilities;
+using Discord_Clone.Server.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -133,7 +134,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserService userService = new(mockUserRepository.Object, mockUserManager.Object, mockLogger.Object);
 
             //Act & Assert  
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<BadRequestException>(async () =>
             {
                 await userService.ChangeDisplayName(new ClaimsPrincipal(), enteredDisplayName);
             });
@@ -192,7 +193,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserService userService = new(mockUserRepository.Object, mockUserManager.Object, mockLogger.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<BadRequestException>(async () =>
             {
                 await userService.EditFirstName(new ClaimsPrincipal(), enteredFirstName);
             });
@@ -252,7 +253,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserService userService = new(mockUserRepository.Object, mockUserManager.Object, mockLogger.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<BadRequestException>(async () =>
             {
                 await userService.EditLastName(new ClaimsPrincipal(), enteredLastName);
             });
@@ -295,7 +296,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserService userService = new(mockUserRepository.Object, mockUserManager.Object, mockLogger.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<BadRequestException>(async () =>
             {
                 await userService.EditAboutMe(new ClaimsPrincipal(), enteredAboutMe);
             });
@@ -350,7 +351,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserService userService = new(mockUserRepository.Object, mockUserManager.Object, mockLogger.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<BadRequestException>(async () =>
             {
                 await userService.StoreUserImage(new ClaimsPrincipal(), file);
             });

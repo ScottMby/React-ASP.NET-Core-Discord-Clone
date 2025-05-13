@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Discord_Clone.Server.Utilities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Discord_Clone.Server.Middleware
 {
@@ -14,19 +15,19 @@ namespace Discord_Clone.Server.Middleware
             {
                 await Next(context);
             }
-            catch (Exception exception)
+            catch (IHttpException exception)
             {
                 Logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
                 ProblemDetails problemDetails = new()
                 {
-                    Status = StatusCodes.Status500InternalServerError,
-                    Title = "Server Error",
-                    Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
+                    Status = exception.Status,
+                    Title = exception.Title,
+                    Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-" + exception.Type,
                     Detail = exception.Message
                 };
 
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.StatusCode = exception.Status;
 
                 await context.Response.WriteAsJsonAsync(problemDetails);
             }

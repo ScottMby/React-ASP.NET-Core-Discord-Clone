@@ -2,6 +2,7 @@
 using Discord_Clone.Server.Models.Data_Transfer_Objects;
 using Discord_Clone.Server.Repositories.Interfaces;
 using Discord_Clone.Server.Services;
+using Discord_Clone.Server.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -204,7 +205,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<BadRequestException>(async () =>
             {
                 await userFriendService.UserFriendRequest(new ClaimsPrincipal(), "sendingUserId");
             });
@@ -239,7 +240,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<BadRequestException>(async () =>
             {
                 await userFriendService.UserFriendRequest(new ClaimsPrincipal(), "receiverUserId");
             });
@@ -273,7 +274,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<BadRequestException>(async () =>
             {
                 await userFriendService.UserFriendRequest(new ClaimsPrincipal(), "receiverUserId");
             });
@@ -313,7 +314,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserFriendsService userFriendService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<NotFoundException>(async () =>
             {
                 await userFriendService.UserFriendRequest(new ClaimsPrincipal(), "receiverUserId");
             });
@@ -375,7 +376,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
         }
 
         [Fact]
-        public async Task AcceptFriendRequest_Exception_RequestDoesNotExist()
+        public async Task AcceptFriendRequest_Exception_UserNotReceiver()
         {
             //Arrange
             UserFriends userFriendsResult = null!;
@@ -417,14 +418,14 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<ForbiddenException>(async () =>
             {
                 await userFriendsService.AcceptFriendRequest(new ClaimsPrincipal(), "test");
             });
         }
 
         [Fact]
-        public async Task AcceptFriendRequest_Exception_UserNotReceiver()
+        public async Task AcceptFriendRequest_Exception_RequestDoesNotExist()
         {
             //Arrange
             UserFriends userFriendsResult = null!;
@@ -460,7 +461,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<NotFoundException>(async () =>
             {
                 await userFriendsService.AcceptFriendRequest(new ClaimsPrincipal(), "test");
             });
@@ -542,7 +543,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<ForbiddenException>(async () =>
             {
                 await userFriendsService.DeclineFriendRequest(new ClaimsPrincipal(), "test");
             });
@@ -577,7 +578,7 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<Exception>(async () =>
+            await Assert.ThrowsAsync<NotFoundException>(async () =>
             {
                 await userFriendsService.DeclineFriendRequest(new ClaimsPrincipal(), "test");
             });

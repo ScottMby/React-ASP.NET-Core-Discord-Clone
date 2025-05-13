@@ -36,10 +36,7 @@ namespace Discord_Clone.Server.Endpoints
         public static async Task<Results<Ok<List<UserSearchResult>>, NotFound>> UserSearch(UserFriendsService userFriendsService, ClaimsPrincipal user, [FromQuery] string searchTerm)
         {
             List<UserSearchResult> userSearchResults = await userFriendsService.UserSearch(user, searchTerm);
-            if (userSearchResults.Count > 0)
-                return TypedResults.Ok(userSearchResults);
-            else
-                return TypedResults.NotFound();
+            return TypedResults.Ok(userSearchResults);
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Discord_Clone.Server.Data;
 using Discord_Clone.Server.Repositories.Interfaces;
+using Discord_Clone.Server.Utilities;
 
 namespace Discord_Clone.Server.Services
 {
@@ -29,7 +30,11 @@ namespace Discord_Clone.Server.Services
             List<UserSearchResult> results = (await UserFriendsRepository.UserSearch(searchTerm));
             //Remove any matches containing the searching user.
             results.RemoveAll(u => u.Id == userEntity.Id);
-            return results;
+            if(results.Count > 0)
+            {
+                return results;
+            }
+            throw new NotFoundException("No results found!");
         }
 
         /// <summary>
@@ -44,19 +49,19 @@ namespace Discord_Clone.Server.Services
 
             if (sendingUser.Id == receiverId)
             {
-                throw new Exception("Users can't send friend requests to themselves. Go make some friends.");
+                throw new BadRequestException("Users can't send friend requests to themselves. Go make some friends.");
             }
 
-            User receivingUser = await UserRepository.GetUserById(receiverId) ?? throw new Exception("Could Not Find Receiving User");
+            User receivingUser = await UserRepository.GetUserById(receiverId) ?? throw new NotFoundException("Could Not Find Receiving User");
 
             if (await UserFriendsRepository.CheckUserHasPendingFriendRequest(sendingUser, receiverId))
             {
-                throw new Exception("User already has a pending friend request.");
+                throw new BadRequestException("User already has a pending friend request.");
             }
 
             if (await UserFriendsRepository.CheckUserIsFriends(sendingUser, receiverId))
             {
-                throw new Exception("User is already a friend.");
+                throw new BadRequestException("User is already a friend.");
             }
 
             UserFriendRequests userFriendRequest = new()
@@ -80,11 +85,11 @@ namespace Discord_Clone.Server.Services
         {
             User userObject = await GetUser(user);
             //Check request exists
-            UserFriendRequests request = (await UserFriendsRepository.GetFriendRequest(friendRequestId)) ?? throw new Exception("Request does not exist.");
+            UserFriendRequests request = (await UserFriendsRepository.GetFriendRequest(friendRequestId)) ?? throw new NotFoundException("Request does not exist.");
             //Check user is receiver of request
             if (request.ReceiverId != userObject.Id)
             {
-                throw new Exception("User is not receiver of this request");
+                throw new ForbiddenException("User is not receiver of this request");
             }
             //Delete Request
             await UserFriendsRepository.DeleteFriendRequest(friendRequestId);
@@ -114,11 +119,11 @@ namespace Discord_Clone.Server.Services
         {
             User userObject = await GetUser(user);
 
-            UserFriendRequests request = (await UserFriendsRepository.GetFriendRequest(friendRequestId) ?? throw new Exception("Request does not exist"));
+            UserFriendRequests request = (await UserFriendsRepository.GetFriendRequest(friendRequestId) ?? throw new NotFoundException("Request does not exist"));
 
             if (request.ReceiverId != userObject.Id)
             {
-                throw new Exception("User is not receiver of this request");
+                throw new ForbiddenException("User is not receiver of this request");
             }
 
             await UserFriendsRepository.DeleteFriendRequest(friendRequestId);
@@ -131,12 +136,12 @@ namespace Discord_Clone.Server.Services
         /// <returns>The user.</returns>
         private async Task<User> GetUser(ClaimsPrincipal user)
         {
-            string? userId = UserManager.GetUserId(user) ?? throw new Exception("User's id could not be found. User: " + user);
+            string? userId = UserManager.GetUserId(user) ?? throw new NotFoundException("User's id could not be found. User: " + user);
             User? userEntity = await UserRepository.GetUserById(userId);
             if (userEntity != null)
                 return userEntity;
 
-            throw new Exception("Found user ID {userId} but could not find user." + userId);
+            throw new NotFoundException("Found user ID {userId} but could not find user." + userId);
         }
         
     }
