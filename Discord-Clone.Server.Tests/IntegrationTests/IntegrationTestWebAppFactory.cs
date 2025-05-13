@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,7 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
                         .UseNpgsql(_dbContainer.GetConnectionString());
                 });
                 services.AddHttpContextAccessor();
+                services.AddHttpClient();
             });
         }
 

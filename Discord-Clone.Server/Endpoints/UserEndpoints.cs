@@ -64,15 +64,8 @@ namespace Discord_Clone.Server.Endpoints
         /// <returns>HTTP Status Code.</returns>
         public static async Task<IResult> CheckDisplayName(UserService userService, ClaimsPrincipal user)
         {
-            try
-            {
-                await userService.CheckDisplayNameValid(user);
-                return Results.Ok();
-            }
-            catch
-            {
-                return Results.BadRequest();
-            }
+            await userService.CheckDisplayNameValid(user);
+            return Results.Ok();
         }
 
         /// <summary>
@@ -84,15 +77,8 @@ namespace Discord_Clone.Server.Endpoints
         /// <returns>HTTP Status Code.</returns>
         public static async Task<IResult> ChangeDisplayName(UserService userService, ClaimsPrincipal user, [FromBody] string displayName)
         {
-            try
-            {
-                await userService.ChangeDisplayName(user, displayName);
-                return Results.Ok();
-            }
-            catch
-            {
-                return Results.BadRequest();
-            }
+            await userService.ChangeDisplayName(user, displayName);
+            return Results.Ok();
         }
 
         /// <summary>
@@ -104,15 +90,8 @@ namespace Discord_Clone.Server.Endpoints
         /// <returns>HTTP Status Code</returns>
         public static async Task<IResult> ChangeFirstName(UserService userService, ClaimsPrincipal user, [FromBody] string firstName)
         {
-            try
-            {
-                await userService.EditFirstName(user, firstName);
-                return Results.Ok();
-            }
-            catch
-            {
-                return Results.BadRequest();
-            }
+            await userService.EditFirstName(user, firstName);
+            return Results.Ok();
         }
 
         /// <summary>
@@ -124,15 +103,8 @@ namespace Discord_Clone.Server.Endpoints
         /// <returns>HTTP Status Code</returns>
         public static async Task<IResult> ChangeLastName(UserService userService, ClaimsPrincipal user, [FromBody] string lastName)
         {
-            try
-            {
-                await userService.EditLastName(user, lastName);
-                return Results.Ok();
-            }
-            catch
-            {
-                return Results.BadRequest();
-            }
+            await userService.EditLastName(user, lastName);
+            return Results.Ok();
         }
 
         /// <summary>
@@ -144,15 +116,8 @@ namespace Discord_Clone.Server.Endpoints
         /// <returns>HTTP Status Code</returns>
         public static async Task<IResult> ChangeAboutMe(UserService userService, ClaimsPrincipal user, [FromBody] string aboutMe)
         {
-            try
-            {
-                await userService.EditAboutMe(user, aboutMe);
-                return Results.Ok();
-            }
-            catch
-            {
-                return Results.BadRequest();
-            }
+            await userService.EditAboutMe(user, aboutMe);
+            return Results.Ok();
         }
 
         /// <summary>

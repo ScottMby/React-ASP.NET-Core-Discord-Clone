@@ -7,38 +7,44 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using NuGet.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace Discord_Clone.Server.Tests.IntegrationTests
 {
     public class UserTests : BaseIntegrationTest
     {
-        private ClaimsPrincipal UserClaimsPrincipal = null!;
-
         public UserTests(IntegrationTestWebAppFactory factory) : base(factory)
         {
-            _ = new DefaultHttpContext();
+
         }
 
         [Fact]
         public async Task CheckDisplayName_NullName_CreatesRandomName()
         {
-            //Arrange
-            await CreateAuthenticatedUser();
-            ClaimsPrincipal userClaimsPrincipal = UserClaimsPrincipal;
+            await DbContext.Database.EnsureCreatedAsync();
+            await DbContext.Database.MigrateAsync();
 
-            //Act
-            await UserEndpoints.CheckDisplayName(UserService, userClaimsPrincipal);
-            //Asset
+            // Arrange
+            await RegisterUser("scott@test.com", "Test123!");
+            string? token = await LoginUser("scott@test.com", "Test123!");
+
+            // Act
+            var request = new HttpRequestMessage(HttpMethod.Patch, "/api/user/checkdisplayname");
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Add("Cookie", $"{token}");
+            }
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
             string? displayName = DbContext.Users.Where(u => u.Email == "scott@test.com").First().DisplayName;
-            Assert.False(String.IsNullOrEmpty(displayName));
-        }
+            Assert.False(string.IsNullOrEmpty(displayName));
 
-        private async Task CreateAuthenticatedUser()
-        {
-            User user = new() { UserName = "test", Email = "scott@test.com" };
-            await UserManager.CreateAsync(user);
-            ClaimsPrincipal userClaimsPrincipal = await SignInManager.CreateUserPrincipalAsync(user);
-            UserClaimsPrincipal = userClaimsPrincipal;
+            await DbContext.Database.EnsureDeletedAsync();
         }
     }
 }

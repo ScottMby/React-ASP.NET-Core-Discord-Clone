@@ -2,9 +2,11 @@
 using Discord_Clone.Server.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,45 +15,93 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
 {
     public class UserFriendsTests : BaseIntegrationTest
     {
-        private ClaimsPrincipal SenderClaimsPrincipal;
-        private ClaimsPrincipal ReceiverClaimsPrincipal;
 
         public UserFriendsTests(IntegrationTestWebAppFactory factory) : base(factory)
         {
             var _context = new DefaultHttpContext();
-
         }
 
         [Fact]
         public async Task SendFriendRequest_Decline()
         {
-            await CreateAuthenticatedUsers();
-            
-            await UserFriendsEndpoints.SendFriendRequest(UserFriendsService, SenderClaimsPrincipal, "receiverId");
+            await DbContext.Database.EnsureCreatedAsync();
+            await DbContext.Database.MigrateAsync();
 
-            UserFriendRequests? request = await DbContext.UserFriendRequests.Where(ufr => ufr.SenderId == "senderId" && ufr.ReceiverId == "receiverId").FirstOrDefaultAsync();
+            //Arrange
+            await RegisterUser("scott@test.com", "Test123!");
+            await RegisterUser("abby@test.com", "Test123!");
+            string? senderToken = await LoginUser("scott@test.com", "Test123!");
 
-            Assert.NotNull(request);
+            User sender = DbContext.Users.Where(u => u.Email == "scott@test.com").First();
+            User receiver = DbContext.Users.Where(u => u.Email == "abby@test.com").First();
 
-            await UserFriendsEndpoints.DeclineFriendRequest(UserFriendsService, ReceiverClaimsPrincipal, request.FriendRequestId);
+            await SendFriendRequest(receiver.Id, senderToken);
 
-            Assert.False(await DbContext.UserFriendRequests.AnyAsync(ufr => ufr.SenderId == "senderId" && ufr.ReceiverId == "receiverId"));
+            string friendRequestId = DbContext.UserFriendRequests.Where(ufr => ufr.SenderId == sender.Id && ufr.ReceiverId == receiver.Id).First().FriendRequestId;
 
-            UserFriends? userFriends = await DbContext.UserFriends.Where(uf => uf.SenderId == "senderId" && uf.ReceiverId == "receiverId").FirstOrDefaultAsync();
+            string? receiverToken = await LoginUser("abby@test.com", "Test123!");
 
-            Assert.Null(userFriends);
+            //Act
+            var request = new HttpRequestMessage(HttpMethod.Delete, "/api/user/declinefriendrequest");
+            if(!String.IsNullOrEmpty(receiverToken))
+            {
+                request.Headers.Add("Cookie", receiverToken);
+            }
+            request.Content = new StringContent($"\"{friendRequestId}\"", Encoding.UTF8, "application/json");
+            var response = await HttpClient.SendAsync(request);
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Null(DbContext.UserFriendRequests.Where(ufr => ufr.SenderId == sender.Id && ufr.ReceiverId == receiver.Id).FirstOrDefault());
+
+            await DbContext.Database.EnsureDeletedAsync();
         }
 
-        private async Task CreateAuthenticatedUsers()
+        [Fact]
+        public async Task SendFriendRequest_Decline_ExceptionIfUserIsSender()
         {
-            User sender = new() { UserName = "sender", Email = "scott@test.com", Id="senderId" };
-            User receiver = new() { UserName = "receiver", Email = "abby@test.com", Id="receiverId" };
-            await UserManager.CreateAsync(sender);
-            await UserManager.CreateAsync(receiver);
-            ClaimsPrincipal senderClaimsPrincipal = await SignInManager.CreateUserPrincipalAsync(sender);
-            ClaimsPrincipal receiverClaimsPrincipal = await SignInManager.CreateUserPrincipalAsync(receiver);
-            SenderClaimsPrincipal = senderClaimsPrincipal;
-            ReceiverClaimsPrincipal = receiverClaimsPrincipal;
+            await DbContext.Database.EnsureCreatedAsync();
+            await DbContext.Database.MigrateAsync();
+
+            //Arrange
+            await RegisterUser("scott@test.com", "Test123!");
+            await RegisterUser("abby@test.com", "Test123!");
+            string? token = await LoginUser("scott@test.com", "Test123!");
+
+            User sender = DbContext.Users.Where(u => u.Email == "scott@test.com").First();
+            User receiver = DbContext.Users.Where(u => u.Email == "abby@test.com").First();
+
+            await SendFriendRequest(receiver.Id, token);
+
+            string friendRequestId = DbContext.UserFriendRequests.Where(ufr => ufr.SenderId == sender.Id && ufr.ReceiverId == receiver.Id).First().FriendRequestId;
+
+
+            //Act
+            var request = new HttpRequestMessage(HttpMethod.Delete, "/api/user/declinefriendrequest");
+            if (!String.IsNullOrEmpty(token))
+            {
+                request.Headers.Add("Cookie", token);
+            }
+            request.Content = new StringContent($"\"{friendRequestId}\"", Encoding.UTF8, "application/json");
+            var response = await HttpClient.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+
+            await DbContext.Database.EnsureDeletedAsync();
+        }
+
+        private async Task SendFriendRequest(string receiverId, string authorizationToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/user/sendfriendrequest");
+            // Add a string to the body of the request
+            request.Content = new StringContent($"\"{receiverId}\"", Encoding.UTF8, "application/json");
+
+            if (!String.IsNullOrEmpty(authorizationToken))
+            {
+                request.Headers.Add("Cookie", $"{authorizationToken}");
+            }
+            var response = await HttpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
         }
     }
 }
