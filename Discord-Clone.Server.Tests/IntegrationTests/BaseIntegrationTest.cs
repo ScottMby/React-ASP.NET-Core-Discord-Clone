@@ -79,5 +79,19 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
             }
             throw new Exception("Couldn't log in");
         }
+
+        internal async Task<string> GetAntiforgeryToken(string token)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "/api/antiforgery/token");
+            if (!String.IsNullOrEmpty(token))
+            {
+                request.Headers.Add("Cookie", token);
+            }
+            var response = await HttpClient.SendAsync(request);
+
+            string result = response.Headers.Where(h => h.Key == "Set-Cookie").First().Value.Where(v => v.Contains("X-XSRF-TOKEN")).FirstOrDefault() ?? throw new Exception("Could not get antiforgery token");
+            result = result.Split('=')[1].Split(';')[0];
+            return result;
+        }
     }
 }

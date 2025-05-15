@@ -16,11 +16,11 @@ namespace Discord_Clone.Server.Endpoints
             antiForgeryGroup.MapGet("token", Token);
         }
 
-        public static Results<Ok<string>, BadRequest> Token(IAntiforgery antiForgeryService, HttpContext httpContext)
+        public static Results<Ok, BadRequest> Token(IAntiforgery antiForgeryService, HttpContext httpContext)
         {
-            var tokens = antiForgeryService.GetAndStoreTokens(httpContext);
-            var xsrfToken = tokens.RequestToken!;
-            return TypedResults.Ok(xsrfToken);
+            var token = antiForgeryService.GetAndStoreTokens(httpContext);
+            httpContext.Response.Cookies.Append("X-XSRF-TOKEN", token.RequestToken!, new CookieOptions { HttpOnly = false });
+            return TypedResults.Ok();
         }
     }
 }

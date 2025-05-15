@@ -89,8 +89,8 @@ namespace Discord_Clone.Server
             builder.Services.AddAntiforgery(opt =>
             {
                 opt.FormFieldName = "AntiForgeryToken";
-                opt.HeaderName = "X-CSRF-TOKEN";
-                opt.SuppressXFrameOptionsHeader = true;
+                opt.HeaderName = "X-XSRF-TOKEN";
+                opt.SuppressXFrameOptionsHeader = false;
             });
 
             builder.Services.AddHttpContextAccessor();
