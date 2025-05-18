@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using NuGet.Protocol.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -581,6 +582,118 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
             await Assert.ThrowsAsync<NotFoundException>(async () =>
             {
                 await userFriendsService.DeclineFriendRequest(new ClaimsPrincipal(), "test");
+            });
+        }
+
+        [Fact]
+        public async Task GetFriendRequests_Success()
+        {
+            // Arrange
+            User userA = new()
+            {
+                Id = "userAId"
+            };
+
+            User userB = new()
+            {
+                Id = "userBId"
+            };
+
+            User userC = new()
+            {
+                Id = "userCId"
+            };
+
+            List<UserFriendRequests> userFriendRequests = new()
+            {
+                new UserFriendRequests
+                {
+                    Sender = userA,
+                    SenderId = userA.Id,
+                    Receiver = userB,
+                    ReceiverId = userB.Id
+                },
+                new UserFriendRequests
+                {
+                    Sender = userB,
+                    SenderId = userB.Id,
+                    Receiver = userC,
+                    ReceiverId = userC.Id
+                },
+                new UserFriendRequests
+                {
+                    Sender = userC,
+                    SenderId = userC.Id,
+                    Receiver = userA,
+                    ReceiverId = userA.Id
+                }
+            };
+
+            mockUserFriendsRepository
+                .Setup(ufr => ufr.GetUserFriendRequests(It.IsAny<User>()))
+                .ReturnsAsync(userFriendRequests.Where(ufr => ufr.SenderId == "userAId" || ufr.ReceiverId == "userAId").ToList());
+
+            mockUserRepository
+                .Setup(ur => ur.GetUserById(It.IsAny<string>()))
+                .ReturnsAsync(userA);
+
+            UserFriendsService userFriendsService = new UserFriendsService(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
+
+            // Act
+            List<UserFriendRequests> result = await userFriendsService.GetUserFriendRequests(new ClaimsPrincipal());
+
+            // Assert
+            Assert.True(result.Count == 2);
+            foreach (var request in result)
+            {
+                Assert.True(request.SenderId == "userAId" || request.ReceiverId == "userAId");
+            }
+        }
+
+        [Fact]
+        public async Task GetFriendRequests_NoResults()
+        {
+            // Arrange
+            User userA = new()
+            {
+                Id = "userAId"
+            };
+
+            User userB = new()
+            {
+                Id = "userBId"
+            };
+
+            User userC = new()
+            {
+                Id = "userCId"
+            };
+
+            List<UserFriendRequests> userFriendRequests = new()
+            {
+                new UserFriendRequests
+                {
+                    Sender = userA,
+                    SenderId = userA.Id,
+                    Receiver = userB,
+                    ReceiverId = userB.Id
+                }
+            };
+
+            mockUserFriendsRepository
+                .Setup(ufr => ufr.GetUserFriendRequests(It.IsAny<User>()))
+                .ReturnsAsync(userFriendRequests.Where(ufr => ufr.SenderId == "userCId" || ufr.ReceiverId == "userCId").ToList());
+
+            mockUserRepository
+                .Setup(ur => ur.GetUserById(It.IsAny<string>()))
+                .ReturnsAsync(userC);
+
+            UserFriendsService userFriendsService = new UserFriendsService(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
+
+            // Assert & Assert
+            await Assert.ThrowsAsync<NotFoundException>(async () =>
+            {
+                await userFriendsService.GetUserFriendRequests(new ClaimsPrincipal());
             });
         }
     }

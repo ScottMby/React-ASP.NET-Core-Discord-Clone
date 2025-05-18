@@ -1,6 +1,6 @@
 ﻿using Carter;
+using Discord_Clone.Server.Models;
 using Discord_Clone.Server.Models.Data_Transfer_Objects;
-using Discord_Clone.Server.Repositories.Interfaces;
 using Discord_Clone.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +25,8 @@ namespace Discord_Clone.Server.Endpoints
             usersGroup.MapPost("acceptfriendrequest", AcceptFriendRequest);
 
             usersGroup.MapDelete("declinefriendrequest", DeclineFriendRequest);
+
+            usersGroup.MapGet("getuserfriendrequests", UserFriendRequests);
         }
 
         /// <summary>
@@ -78,6 +80,16 @@ namespace Discord_Clone.Server.Endpoints
             return TypedResults.Ok();
         }
 
+        /// <summary>
+        /// Get a list of pending friend requests for a user.
+        /// </summary>
+        /// <param name="userFriendsService">The user friends service.</param>
+        /// <param name="user">The claims principle of the user.</param>
+        /// <returns>A list of user friend requests.</returns>
+        public static async Task<Results<Ok<List<UserFriendRequests>>, NotFound>> UserFriendRequests(UserFriendsService userFriendsService, ClaimsPrincipal user)
+        {
+            return TypedResults.Ok(await userFriendsService.GetUserFriendRequests(user));
+        }
 
     }
 }

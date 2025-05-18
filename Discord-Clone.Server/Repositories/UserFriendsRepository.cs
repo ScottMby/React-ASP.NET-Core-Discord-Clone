@@ -52,7 +52,7 @@ namespace Discord_Clone.Server.Repositories
 
         public async Task<List<UserFriendRequests>> GetUserFriendRequests(User user)
         {
-            return (await DbContext.UserFriendRequests.Where(ufr => ufr.SenderId == user.Id || ufr.ReceiverId == user.Id).ToListAsync());
+            return (await DbContext.UserFriendRequests.AsNoTracking().Where(ufr => ufr.SenderId == user.Id || ufr.ReceiverId == user.Id).ToListAsync());
         }
 
         public async Task<List<UserSearchResult>> UserSearch(string searchTerm)

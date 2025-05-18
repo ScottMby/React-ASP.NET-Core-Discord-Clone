@@ -161,6 +161,62 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
             await DbContext.Database.EnsureDeletedAsync();
         }
 
+        [Fact]
+        public async Task GetUserFriends_ReturnsListOfRequests()
+        {
+            await DbContext.Database.EnsureCreatedAsync();
+            await DbContext.Database.MigrateAsync();
+
+            //Arrange
+            await RegisterUser("scott@test.com", "Test123!");
+            await RegisterUser("abby@test.com", "Test123!");
+            await RegisterUser("kylo@test.com", "Test123!");
+
+            User userA = DbContext.Users.Where(u => u.Email == "scott@test.com").First();
+            User userB = DbContext.Users.Where(u => u.Email == "abby@test.com").First();
+            User userC = DbContext.Users.Where(u => u.Email == "kylo@test.com").First();
+
+            string? tokenA = await LoginUser("scott@test.com", "Test123!");
+
+            await SendFriendRequest(userB.Id, tokenA);
+            await SendFriendRequest(userC.Id, tokenA);
+
+            string? tokenB = await LoginUser("abby@test.com", "Test123!");
+
+            await SendFriendRequest(userC.Id, tokenB);
+
+            // Act
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/user/getuserfriendrequests");
+            if(!String.IsNullOrEmpty(tokenB))
+            {
+                request.Headers.Add("Cookie", tokenB);
+            }
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            
+           Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var content = await response.Content.ReadAsStringAsync();
+            var friendRequests = System.Text.Json.JsonSerializer.Deserialize<List<Discord_Clone.Server.Models.UserFriendRequests>>(content, new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            Assert.NotNull(friendRequests);
+            Assert.True(friendRequests.Count > 0);
+
+            string userBId = DbContext.Users.Where(u => u.Email == "abby@test.com").First().Id;
+
+            foreach(UserFriendRequests friendRequest in friendRequests)
+            {
+                Assert.True(friendRequest.SenderId == userBId || friendRequest.ReceiverId == userBId );
+            }
+
+            await DbContext.Database.EnsureDeletedAsync();
+        }
+
         private async Task SendFriendRequest(string receiverId, string authorizationToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "api/user/sendfriendrequest");

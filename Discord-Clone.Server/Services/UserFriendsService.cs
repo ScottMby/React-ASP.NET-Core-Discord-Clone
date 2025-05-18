@@ -129,6 +129,20 @@ namespace Discord_Clone.Server.Services
             await UserFriendsRepository.DeleteFriendRequest(friendRequestId);
         }
 
+        public async Task<List<UserFriendRequests>> GetUserFriendRequests(ClaimsPrincipal user)
+        {
+            User userObject = await GetUser(user);
+
+            List<UserFriendRequests> results = await UserFriendsRepository.GetUserFriendRequests(userObject);
+
+            if(results.Count <= 0)
+            {
+                throw new NotFoundException("Not friend requests found for this user.");
+            }
+
+            return results;
+        }
+
         /// <summary>
         /// Gets the user from the database.
         /// </summary>
