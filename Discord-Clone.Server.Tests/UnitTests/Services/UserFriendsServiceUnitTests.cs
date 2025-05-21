@@ -696,5 +696,100 @@ namespace Discord_Clone.Server.Tests.UnitTests.Services
                 await userFriendsService.GetUserFriendRequests(new ClaimsPrincipal());
             });
         }
+
+        [Fact]
+        public async Task GetFriends_Sucess()
+        {
+            // Arrange
+            User userA = new()
+            {
+                Id = "userAId"
+            };
+
+            User userB = new()
+            {
+                Id = "userBId"
+            };
+
+            User userC = new()
+            {
+                Id = "userCId"
+            };
+
+            DateTime dateTime = DateTime.UtcNow;
+
+            List<UserFriendsResult> userFriendsResults = new()
+            {
+                new UserFriendsResult()
+                {
+                    Id = "userAId",
+                    FriendsSince = dateTime,
+                    DisplayName = "userADisplayName",
+                    AboutMe = "Hello I am User A",
+                    PhotoURL = "test.png"
+                },
+                new UserFriendsResult()
+                {
+                    Id = "userBId",
+                    FriendsSince = dateTime,
+                    DisplayName = "userBDisplayName",
+                    AboutMe = "Hello I am User B",
+                    PhotoURL = "testB.png"
+                }
+            };
+
+            mockUserFriendsRepository.Setup(ufr => ufr.GetUserFriends(It.IsAny<User>()))
+                .ReturnsAsync(userFriendsResults);
+
+            mockUserRepository
+                .Setup(ur => ur.GetUserById(It.IsAny<string>()))
+                .ReturnsAsync(userC);
+
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
+
+            // Act
+            List<UserFriendsResult> result = await userFriendsService.GetUserFriends(new ClaimsPrincipal());
+
+            // Assert
+            Assert.Equal(userFriendsResults, result);
+        }
+
+        [Fact]
+        public async Task GetFriends_Exception_NoFriends()
+        {
+            // Arrange
+            User userA = new()
+            {
+                Id = "userAId"
+            };
+
+            User userB = new()
+            {
+                Id = "userBId"
+            };
+
+            User userC = new()
+            {
+                Id = "userCId"
+            };
+
+            DateTime dateTime = DateTime.UtcNow;
+
+            mockUserFriendsRepository.Setup(ufr => ufr.GetUserFriends(It.IsAny<User>()))
+                .ReturnsAsync(new List<UserFriendsResult>());
+
+            mockUserRepository
+                .Setup(ur => ur.GetUserById(It.IsAny<string>()))
+                .ReturnsAsync(userC);
+
+            UserFriendsService userFriendsService = new(mockUserRepository.Object, mockUserFriendsRepository.Object, mockUserFriendsLogger.Object, mockUserManager.Object);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NotFoundException>(async () =>
+            {
+                await userFriendsService.GetUserFriends(new ClaimsPrincipal());
+            });
+            
+        }
     }
 }

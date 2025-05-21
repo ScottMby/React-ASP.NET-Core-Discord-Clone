@@ -17,42 +17,67 @@ namespace Discord_Clone.Server.Repositories
 
         public async Task AddUserFriend(UserFriends userFriends)
         {
-            await DbContext.UserFriends.AddAsync(userFriends);
+            await DbContext.UserFriends
+                .AddAsync(userFriends);
             await DbContext.SaveChangesAsync();
         }
 
         public async Task AddUserFriendRequest(UserFriendRequests userFriendRequests)
         {
-            await DbContext.UserFriendRequests.AddAsync(userFriendRequests);
+            await DbContext.UserFriendRequests
+                .AddAsync(userFriendRequests);
             await DbContext.SaveChangesAsync();
         }
 
         public async Task<bool> CheckUserHasPendingFriendRequest(User sender, string receiverId)
         {
-            return (await DbContext.UserFriendRequests.AnyAsync(ufr => ufr.SenderId == sender.Id && ufr.ReceiverId == receiverId
-            || ufr.SenderId == receiverId && ufr.ReceiverId == sender.Id));
+            return (await DbContext.UserFriendRequests
+                .AnyAsync(ufr => ufr.SenderId == sender.Id && ufr.ReceiverId == receiverId
+                    || ufr.SenderId == receiverId && ufr.ReceiverId == sender.Id));
         }
 
         public async Task<bool> CheckUserIsFriends(User sender, string receiverId)
         {
-            return (await DbContext.UserFriends.AnyAsync(uf => uf.SenderId == sender.Id && uf.ReceiverId == receiverId
-            || uf.SenderId == receiverId && uf.ReceiverId == sender.Id));
+            return (await DbContext.UserFriends
+                .AnyAsync(uf => uf.SenderId == sender.Id && uf.ReceiverId == receiverId
+                    || uf.SenderId == receiverId && uf.ReceiverId == sender.Id));
         }
 
         public async Task DeleteFriendRequest(string friendRequestId)
         {
-            DbContext.UserFriendRequests.Remove(await GetFriendRequest(friendRequestId));
+            DbContext.UserFriendRequests
+                .Remove(await GetFriendRequest(friendRequestId));
             await DbContext.SaveChangesAsync();
         }
 
         public async Task<UserFriendRequests> GetFriendRequest(string friendRequestId)
         {
-            return (await DbContext.UserFriendRequests.Where(ufr => ufr.FriendRequestId == friendRequestId).FirstAsync());
+            return (await DbContext.UserFriendRequests
+                .Where(ufr => ufr.FriendRequestId == friendRequestId)
+                .FirstAsync());
         }
 
         public async Task<List<UserFriendRequests>> GetUserFriendRequests(User user)
         {
-            return (await DbContext.UserFriendRequests.AsNoTracking().Where(ufr => ufr.SenderId == user.Id || ufr.ReceiverId == user.Id).ToListAsync());
+            return await DbContext.UserFriendRequests
+                .AsNoTracking()
+                .Where(ufr => ufr.SenderId == user.Id || ufr.ReceiverId == user.Id)
+                .ToListAsync();
+        }
+
+        public async Task<List<UserFriendsResult>> GetUserFriends(User user)
+        {
+            return await DbContext.UserFriends
+                .Where(uf => uf.SenderId == user.Id || uf.ReceiverId == user.Id)
+                .Select(uf => new UserFriendsResult
+                {
+                    Id = uf.SenderId == user.Id ? uf.ReceiverId : uf.SenderId,
+                    DisplayName = uf.SenderId == user.Id ? uf.Receiver.DisplayName! : uf.Sender.DisplayName!,
+                    PhotoURL = uf.SenderId == user.Id ? uf.Receiver.PhotoURL! : uf.Sender.PhotoURL!,
+                    AboutMe = uf.SenderId == user.Id ? uf.Receiver.AboutMe! : uf.Sender.AboutMe!,
+                    FriendsSince = uf.FriendsSince
+                })
+                .ToListAsync();
         }
 
         public async Task<List<UserSearchResult>> UserSearch(string searchTerm)

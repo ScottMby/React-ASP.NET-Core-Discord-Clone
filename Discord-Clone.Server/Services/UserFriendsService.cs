@@ -30,7 +30,7 @@ namespace Discord_Clone.Server.Services
             List<UserSearchResult> results = (await UserFriendsRepository.UserSearch(searchTerm));
             //Remove any matches containing the searching user.
             results.RemoveAll(u => u.Id == userEntity.Id);
-            if(results.Count > 0)
+            if (results.Count > 0)
             {
                 return results;
             }
@@ -129,18 +129,44 @@ namespace Discord_Clone.Server.Services
             await UserFriendsRepository.DeleteFriendRequest(friendRequestId);
         }
 
+        /// <summary>
+        /// Gets a list of the user's friend requests.
+        /// </summary>
+        /// <param name="user">The claims principal of the user.</param>
+        /// <returns>A list of user friend requests.</returns>
+        /// <exception cref="NotFoundException">Couldn't find the user or any of the user's friend requests.</exception>
         public async Task<List<UserFriendRequests>> GetUserFriendRequests(ClaimsPrincipal user)
         {
             User userObject = await GetUser(user);
 
             List<UserFriendRequests> results = await UserFriendsRepository.GetUserFriendRequests(userObject);
 
-            if(results.Count <= 0)
+            if (results.Count <= 0)
             {
                 throw new NotFoundException("Not friend requests found for this user.");
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Gets a list of a user's friends.
+        /// </summary>
+        /// <param name="user">The claims principal of the user.</param>
+        /// <returns>A list of the user friends result DTO</returns>
+        public async Task<List<UserFriendsResult>> GetUserFriends(ClaimsPrincipal user)
+        {
+            User userObject = await GetUser(user);
+
+            List<UserFriendsResult> result = await UserFriendsRepository.GetUserFriends(userObject);
+
+            if(result.Count <= 0)
+            {
+                throw new NotFoundException("Not friends found for this user.");
+            }
+
+            return result;
+
         }
 
         /// <summary>
@@ -157,6 +183,6 @@ namespace Discord_Clone.Server.Services
 
             throw new NotFoundException("Found user ID {userId} but could not find user." + userId);
         }
-        
+
     }
 }

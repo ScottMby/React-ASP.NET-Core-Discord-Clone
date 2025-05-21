@@ -27,6 +27,8 @@ namespace Discord_Clone.Server.Endpoints
             usersGroup.MapDelete("declinefriendrequest", DeclineFriendRequest);
 
             usersGroup.MapGet("getuserfriendrequests", UserFriendRequests);
+
+            usersGroup.MapGet("getuserfriends", UserFriends);
         }
 
         /// <summary>
@@ -89,6 +91,17 @@ namespace Discord_Clone.Server.Endpoints
         public static async Task<Results<Ok<List<UserFriendRequests>>, NotFound>> UserFriendRequests(UserFriendsService userFriendsService, ClaimsPrincipal user)
         {
             return TypedResults.Ok(await userFriendsService.GetUserFriendRequests(user));
+        }
+
+        /// <summary>
+        /// Gets a list of the user's friends.
+        /// </summary>
+        /// <param name="userFriendsService">The user friends service.</param>
+        /// <param name="user">The claims principle of the user.</param>
+        /// <returns>A list of the user's friends as UserFriendsResult objects.</returns>
+        public static async Task<Results<Ok<List<UserFriendsResult>>, NotFound>> UserFriends(UserFriendsService userFriendsService, ClaimsPrincipal user)
+        {
+            return TypedResults.Ok(await userFriendsService.GetUserFriends(user));
         }
 
     }

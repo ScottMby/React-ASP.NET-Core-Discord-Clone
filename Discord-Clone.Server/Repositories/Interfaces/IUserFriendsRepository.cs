@@ -63,5 +63,12 @@ namespace Discord_Clone.Server.Repositories.Interfaces
         /// <param name="receiverId">The ID of the other user.</param>
         /// <returns>A task that represents the asynchronous operation. The task result is true if a pending friend request exists, otherwise false.</returns>
         public Task<bool> CheckUserHasPendingFriendRequest(User sender, string receiverId);
+
+        /// <summary>
+        /// Gets a list of a user's friends as the User Friend Result DTO.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>A list of User Friends Result.</returns>
+        public Task<List<UserFriendsResult>> GetUserFriends(User user);
     }
 }

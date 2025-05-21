@@ -1,7 +1,9 @@
 ﻿using Discord_Clone.Server.Endpoints;
 using Discord_Clone.Server.Models;
+using Discord_Clone.Server.Models.Data_Transfer_Objects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Discord_Clone.Server.Tests.IntegrationTests
@@ -199,7 +202,7 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var content = await response.Content.ReadAsStringAsync();
-            var friendRequests = System.Text.Json.JsonSerializer.Deserialize<List<Discord_Clone.Server.Models.UserFriendRequests>>(content, new System.Text.Json.JsonSerializerOptions
+            var friendRequests = JsonSerializer.Deserialize<List<UserFriendRequests>>(content, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
@@ -213,6 +216,86 @@ namespace Discord_Clone.Server.Tests.IntegrationTests
             {
                 Assert.True(friendRequest.SenderId == userBId || friendRequest.ReceiverId == userBId );
             }
+
+            await DbContext.Database.EnsureDeletedAsync();
+        }
+
+        [Fact]
+        public async Task GetUserFriends_ReturnsListOfFriends()
+        {
+            await DbContext.Database.EnsureCreatedAsync();
+            await DbContext.Database.MigrateAsync();
+
+            // Arrange
+            await RegisterUser("scott@test.com", "Test123!");
+            await RegisterUser("abby@test.com", "Test123!");
+            await RegisterUser("kylo@test.com", "Test123!");
+
+            User userA = DbContext.Users.Where(u => u.Email == "scott@test.com").First();
+            User userB = DbContext.Users.Where(u => u.Email == "abby@test.com").First();
+            User userC = DbContext.Users.Where(u => u.Email == "kylo@test.com").First();
+
+            DateTime friendsSince = DateTime.UtcNow;
+
+            await DbContext.UserFriends.AddRangeAsync(new UserFriends[]
+            {
+                new UserFriends()
+                {
+                    Sender = userA,
+                    SenderId = userA.Id,
+                    Receiver = userC,
+                    ReceiverId = userC.Id,
+                    FriendsSince = friendsSince
+                },
+                new UserFriends()
+                {
+                    Sender = userB,
+                    SenderId = userB.Id,
+                    Receiver = userC,
+                    ReceiverId = userC.Id,
+                    FriendsSince = friendsSince
+                }
+            });
+
+            await DbContext.SaveChangesAsync();
+
+            string? token = await LoginUser("kylo@test.com", "Test123!");
+
+            // Act
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/user/getuserfriends");
+            if (!String.IsNullOrEmpty(token))
+            {
+                request.Headers.Add("Cookie", token);
+            }
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            List<UserFriendsResult>? results = JsonSerializer.Deserialize<List<UserFriendsResult>>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            Assert.NotNull(results);
+
+            var resultA = results.FirstOrDefault(r => r.Id == userA.Id);
+            var resultB = results.FirstOrDefault(r => r.Id == userB.Id);
+
+            Assert.NotNull(resultA);
+            Assert.NotNull(resultB);
+
+            Assert.Equal(userA.Id, resultA.Id);
+            Assert.Equal(userA.DisplayName, resultA.DisplayName);
+            Assert.Equal(userA.AboutMe, resultA.AboutMe);
+            Assert.Equal(userA.PhotoURL, resultA.PhotoURL);
+            Assert.True((resultA.FriendsSince - friendsSince).Duration() < TimeSpan.FromSeconds(1), "Friends since timestamp variance over 1 second.");
+
+            Assert.Equal(userB.Id, resultB.Id);
+            Assert.Equal(userB.DisplayName, resultB.DisplayName);
+            Assert.Equal(userB.AboutMe, resultB.AboutMe);
+            Assert.Equal(userB.PhotoURL, resultB.PhotoURL);
+            Assert.True((resultB.FriendsSince - friendsSince).Duration() < TimeSpan.FromSeconds(1), "Friends since timestamp variance over 1 second.");
 
             await DbContext.Database.EnsureDeletedAsync();
         }
